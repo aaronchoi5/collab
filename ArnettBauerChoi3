@@ -1,0 +1,93 @@
+/*
+Authors: Austin Arnett, Aaron Choi, Brian Bauer
+Course: Data Structures
+Instructor: Anca Ralescu
+TA: Suryadip Chakraborty
+Abstract:
+Preconditions:
+Postconditions:
+*/
+
+#include<iostream>
+#include<iomanip>
+#include<cstdlib>
+#include<ctime>
+#include<string>
+
+class Inbox{
+private:
+    IsEmpty();
+    int Number_of_Comms;
+
+    //Communication is the main make-up of Inbox It provides a list of Subjects to the user.
+    struct Communication{
+
+        std::string Subject;
+        int Number_of_Emails;
+
+        Communication *next; //Next email
+        Communication *previous; //Previous email
+
+        //Emails are the linked list within communication. Each node provides message details.
+        struct Email{
+            //Email details
+            std::string To;
+            std::string From;
+            std::string Message;
+
+            //These pointers navigate the linked list.
+            Email *Older_Email; // "*next"
+            Email *Newer_Email; // "*previous"
+        };
+
+        //This is the pointer that points to the front of an "Email" string (or top of the "Email" stack).
+        Email *NewestEmail; // "*head" (or "*top" of stack) of "Email"
+
+    };
+
+    Communication *NewestComm; //Points to first Communication
+
+public:
+    //Constructors & Destructor
+    Inbox(); //Default Constructor
+    ~Inbox(); //Destructor
+    Inbox(const Inbox& object); //Copy constructor, unsure of what to name the object. Maybe just "object"?
+
+    //Main methods for Inbox. All methods accessible from ActionMenu()
+    void InsertEmail(); //Prompts user for email information
+    void DeleteCommunication(); //Deletes a communication having a given subject.
+/* !!! */    Communication *SearchCommunication(); //Searches Inbox for a given Subject, will ask user for subject.
+//The above function will be the trickiest, please be sure to verify that it is correct.
+    void DisplayInpox();
+};
+
+Inbox::Inbox(){
+    Number_of_Comms = 0;
+    NewestComm = NULL;
+}
+
+Inbox::Inbox(const Inbox& object){
+    Number_of_Comms = object.Number_of_Comms;
+    *NewestComm = *object.NewestComm;/////////////////////////////////////////////////////////////////////
+}
+
+Inbox::~Inbox(){
+    if(NewestComm!=NULL){
+        while(NewestComm!=NULL){
+            while(NewestComm->NewestEmail!=NULL){
+                delete NewestComm->NewestEmail->To;
+                delete NewestComm->NewestEmail->From;
+                delete NewestComm->NewestEmail->Message;
+                delete NewestComm->NewestEmail->Older_Email;
+                NewestComm->NewestEmail = NewestComm->NewestEmail->Newer_Email;
+            }
+            delete NewestComm->Subject;
+            delete NewestComm->Number_of_Emails;
+            delete NewestComm->previous
+            NewestComm = NewestComm->next
+        }
+        delete Number_of_Comms;
+        delete NewestComm;
+    }
+}
+
