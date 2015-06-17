@@ -7,6 +7,9 @@ Abstract:
 Preconditions:
 Postconditions:
 */
+// To Aaron and Brian:
+//    The code where I am unsure of what I'm doing is marked with /*!!!*/. you may want to pay extra attention to these
+// areas. I'm thinking the biggest problems in the code will be dereferencing pointers. There are a lot of nested pointers.
 
 #include<iostream>
 #include<iomanip>
@@ -14,9 +17,10 @@ Postconditions:
 #include<ctime>
 #include<string>
 
+/*========================================================================================================================*/
+//Inbox Class
 class Inbox{
 private:
-    IsEmpty();
     int Number_of_Comms;
 
     //Communication is the main make-up of Inbox It provides a list of Subjects to the user.
@@ -25,8 +29,8 @@ private:
         std::string Subject;
         int Number_of_Emails;
 
-        Communication *next; //Next email
-        Communication *previous; //Previous email
+        Communication *next; //Next string of emails
+        Communication *previous; //Previous string of emails
 
         //Emails are the linked list within communication. Each node provides message details.
         struct Email{
@@ -45,7 +49,7 @@ private:
 
     };
 
-    Communication *NewestComm; //Points to first Communication
+    Communication *NewestComm; //Points to first Communication ("*top" of stack)
 
 public:
     //Constructors & Destructor
@@ -53,41 +57,127 @@ public:
     ~Inbox(); //Destructor
     Inbox(const Inbox& object); //Copy constructor, unsure of what to name the object. Maybe just "object"?
 
-    //Main methods for Inbox. All methods accessible from ActionMenu()
-    void InsertEmail(); //Prompts user for email information
+    //Main methods for Inbox.
+    void InsertEmail(); //Prompts user for email information and adds it to linked list(s)
     void DeleteCommunication(); //Deletes a communication having a given subject.
-/* !!! */    Communication *SearchCommunication(); //Searches Inbox for a given Subject, will ask user for subject.
-//The above function will be the trickiest, please be sure to verify that it is correct.
+/*!!!*/    Communication *SearchCommunication(); //Searches Inbox for a given Subject, will ask user for subject.
+//The above function will be the tricky, please be sure to verify that it is correct.
     void DisplayInpox();
 };
 
+/*========================================================================================================================*/
+//Normal Constructor
 Inbox::Inbox(){
     Number_of_Comms = 0;
     NewestComm = NULL;
 }
 
+/*========================================================================================================================*/
+//Copy Constructor
+/*It should be noted that CommTraveler and EmailTraveler travel through the object's pointers
+    to acquire data. These pointers are not in any way related to the new Inbox being made.*/
 Inbox::Inbox(const Inbox& object){
+/*!!!*/ // This whole constructor is something that needs to be checked for problems.
+
     Number_of_Comms = object.Number_of_Comms;
-    *NewestComm = *object.NewestComm;/////////////////////////////////////////////////////////////////////
+
+    //CommTraveler will travel through object's Comm Linked List to acquire data.
+    Communication *CommTraveler = object.NewestComm;
+
+    //Initial Setup for Comm loop, need two pointers to be able to assign node pointers properly.
+    Communication *newComm = new Communication;
+    Communication *TempComm = new Communication;
+
+    NewestComm = newComm;
+
+    while(CommTraveler != NULL){
+
+        //Get/Set data
+        newComm->Subject = CommTraveler->Subject;
+        newComm->Number_of_Emails = CommTraveler->Number_of_Emails;
+
+        //Email Traveler will travel through each email within CommTraveler to acquire data.
+        Communication::Email *EmailTraveler = CommTraveler->NewestEmail;
+
+        //Initial Setup for Email loop, need two pointers to be able to assign node pointers properly.
+        Communication::Email *newEmail = new Communication::Email();
+        Communication::Email *TempEmail = new Communication::Email();
+
+        newComm->NewestEmail = newEmail;
+
+        while(EmailTraveler != NULL){
+
+            //Get/Set data
+            newEmail->To = EmailTraveler->To;
+            newEmail->From = EmailTraveler->From;
+            newEmail->Message = EmailTraveler->Message;
+
+            //Assignment of pointers. Remember Older_Email is "*next" and Newer_Email is "*previous"
+            newEmail->Newer_Email = TempEmail; //Set "*previous" to previous Email. or NULL if first loop
+            TempEmail = newEmail;              //Set previous to current Email.
+            newEmail = newEmail->Older_Email;  //Set current email to next (NULL) email.
+            TempEmail->Older_Email = newEmail; //Set "*next" to next (NULL) email. Which is then modified next loop.
+
+            EmailTraveler = EmailTraveler->Older_Email; //Progress the loop
+        }
+        delete newEmail; delete TempEmail;
+
+        //Assignment of pointers. For Comms
+        newComm->previous = TempComm;
+        TempComm = newComm;
+        newComm = newComm->next;
+        TempComm->next = newComm;
+
+        CommTraveler = CommTraveler->next;
+    }
+    delete newComm; delete TempComm;
 }
 
-Inbox::~Inbox(){
-    if(NewestComm!=NULL){
-        while(NewestComm!=NULL){
-            while(NewestComm->NewestEmail!=NULL){
-                delete NewestComm->NewestEmail->To;
-                delete NewestComm->NewestEmail->From;
-                delete NewestComm->NewestEmail->Message;
-                delete NewestComm->NewestEmail->Older_Email;
-                NewestComm->NewestEmail = NewestComm->NewestEmail->Newer_Email;
-            }
-            delete NewestComm->Subject;
-            delete NewestComm->Number_of_Emails;
-            delete NewestComm->previous
-            NewestComm = NewestComm->next
+/*========================================================================================================================*/
+//Destructor
+Inbox::~Inbox(){ //I'm assuming I have to rework this so that the object is deleted. e.g. delete *NewestEmail.
+/*!!!*/ //unsure of what delete does in it's entirety. Assigning NULL does not deallocate memory.
+    while(NewestComm!=NULL){
+        while(NewestComm->NewestEmail!=NULL){
+            delete NewestComm->NewestEmail->To;
+            delete NewestComm->NewestEmail->From;
+            delete NewestComm->NewestEmail->Message;
+            delete NewestComm->NewestEmail->Newer_Email;
+            NewestComm->NewestEmail = NewestComm->NewestEmail->Older_Email;
         }
-        delete Number_of_Comms;
-        delete NewestComm;
+        delete NewestComm->Subject;
+        delete NewestComm->Number_of_Emails;
+        delete NewestComm->previous;
+        NewestComm = NewestComm->next;
     }
+    delete Number_of_Comms;
+    delete NewestComm;
 }
+
+/*========================================================================================================================*/
+//InsertEmail()
+void Inbox::InsertEmail(){
+
+    std::string subject_IO;
+    std::string To_IO;
+    std::string From_IO;
+    std::string Message_IO;
+
+
+
+    cout << "Please enter the subject of your email: ";
+    cin <<
+
+
+
+
+
+}
+
+
+
+
+
+
+
 
