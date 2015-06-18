@@ -201,40 +201,86 @@ void Inbox::InsertEmail(){
         ArrOfStrs.push_back(UserInput);
     }while(UserInput != "done");
 
+    Communication* SubjectGiven;
+    for(int i = 0; i < ArrOfStrs.size(); i++){
+        SubjectGiven = SearchCommunication(ArrOfStrs[i]);
+        if(SubjectGiven == NULL){
+            SubjectGiven = new Communication;
+            SubjectGiven->Subject = ArrOfStrs[i];
+            SubjectGiven->Number_of_Emails = 1;
+            SubjectGiven->next = NewestComm;
+            SubjectGiven->previous = NULL;
+            NewestComm = SubjectGiven;
+        }
+        else{
+            //Increment number of Emails
+            SubjectGiven->Number_of_Emails++;
 
+            //Check if subject is already at front. If so, continue to next iteration of loop.
+            if(NewestComm->Subject == SubjectGiven->Subject){
+                continue;
+            }
+            //If not, adjust neighboring nodes' pointers...
+            SubjectGiven->previous->next = SubjectGiven->next;
+            if(SubjectGiven->next != NULL){
+                SubjectGiven->next->previous = SubjectGiven->previous;
+            }
 
-
-
-
-
-}
-
-Inbox::Communication* Inbox::SearchCommunication(string keyword){
-    Communication* commPointer=NewestComm;
-    while(commPointer->Subject!=keyword && commPointer->next!=NULL){
-        commPointer=commPointer->next;
+            //...then move node to front.
+            NewestComm->previous = SubjectGiven;
+            SubjectGiven->next = NewestComm;
+            SubjectGiven->previous = NULL;
+            NewestComm = SubjectGiven;
+        }
     }
-    if(commPointer->next==NULL){
+
+
+
+
+
+}//End InsertEmail()
+
+/*=======================================================================================================================*/
+//SearchCommunication()
+Inbox::Communication* Inbox::SearchCommunication(string keyword){
+    Communication* commPointer = NewestComm;
+    while(commPointer->Subject != keyword && commPointer->next != NULL){
+        commPointer = commPointer->next;
+    }
+    if(commPointer == keyword && commPointer->next == NULL){
+        return commPointer;
+    }
+    else if(commPointer->next == NULL){
         return NULL;
     }
     return commPointer;
 }
 
+/*=======================================================================================================================*/
+//DeleteCommunication(string)
 void Inbox::DeleteCommunication(string subject){
-    Communication* target=SearchCommunication(subject);
-    Communication::Email* temp=target->NewestEmail;
-    while(temp!=NULL){
-        temp=temp->Older_Email;
-        delete target->NewestEmail;
-        target->NewestEmail=temp;
+    Communication* target = SearchCommunication(subject);
+    //Check for stupidity
+    if(target == NULL){
+        cout << "Could not find given subject for deletion.\n";
+        return;
     }
-    target->NewestEmail=NULL;
 
-    if(target->previous!=NULL){
-        target->previous->next=target->next;
+    //Delete Email list
+    Communication::Email* temp = target->NewestEmail;
+    while(temp != NULL){
+        temp = temp->Older_Email;
+        delete target->NewestEmail;
+        target->NewestEmail = temp;
     }
-    if(target->next!=NULL){
-        target->next->previous=target->previous;
+    target->NewestEmail = NULL;
+
+    //Adjust Comm pointers
+    if(target->previous != NULL){
+        target->previous->next = target->next;
+    }
+    if(target->next != NULL){
+        target->next->previous = target->previous;
     }
     delete target;
     return;
@@ -242,6 +288,9 @@ void Inbox::DeleteCommunication(string subject){
 
 
 int main(){
-return 0;
-}
 
+
+
+
+    return 0;
+}
