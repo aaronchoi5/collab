@@ -20,6 +20,7 @@ Postconditions:
 #include<string>
 #include<vector>
 
+using namespace std;
 /*=======================================================================================================================*/
 //Inbox Class
 class Inbox{
@@ -29,7 +30,7 @@ private:
     //Communication is the main make-up of Inbox It provides a list of Subjects to the user.
     struct Communication{
 
-        std::string Subject;
+        string Subject;
         int Number_of_Emails;
 
         Communication *next; //Next string of emails
@@ -38,9 +39,9 @@ private:
         //Emails are the linked list within communication. Each node provides message details.
         struct Email{
             //Email details
-            std::string To;
-            std::string From;
-            std::string Message;
+            string To;
+            string From;
+            string Message;
 
             //These pointers navigate the linked list.
             Email *Older_Email; // "*next"
@@ -62,8 +63,8 @@ public:
 
     //Main methods for Inbox.
     void InsertEmail(); //Prompts user for email information and adds it to linked list(s)
-    void DeleteCommunication(); //Deletes a communication having a given subject.
-/*!!!*/    Communication *SearchCommunication(); //Searches Inbox for a given Subject, will ask user for subject.
+    void DeleteCommunication(string subject); //Deletes a communication having a given subject.
+/*!!!*/    Communication* SearchCommunication(string keyword); //Searches Inbox for a given Subject, will ask user for subject.
 //The above function will be the tricky, please be sure to verify that it is correct.
     void DisplayInpox();
 };//End Inbox
@@ -192,12 +193,11 @@ Inbox::~Inbox(){ //I'm assuming I have to rework this so that the object is dele
 //InsertEmail()
 void Inbox::InsertEmail(){
 
-    std::vector<std::string> ArrOfStrs; //"Array Of Strings"
-    std::string UserInput
-
-    std::cout << "Enter the subject of your email. (Type \"done\" to finish)\n";
+    vector<string> ArrOfStrs; //"Array Of Strings"
+    string UserInput;
+    cout << "Enter the subject of your email. (Type \"done\" to finish)\n";
     do{
-        std::getline(std::cin, UserInput);
+        getline(cin, UserInput);
         ArrOfStrs.push_back(UserInput);
     }while(UserInput != "done");
 
@@ -209,7 +209,39 @@ void Inbox::InsertEmail(){
 
 }
 
+Inbox::Communication* Inbox::SearchCommunication(string keyword){
+    Communication* commPointer=NewestComm;
+    while(commPointer->Subject!=keyword && commPointer->next!=NULL){
+        commPointer=commPointer->next;
+    }
+    if(commPointer->next==NULL){
+        return NULL;
+    }
+    return commPointer;
+}
+
+void Inbox::DeleteCommunication(string subject){
+    Communication* target=SearchCommunication(subject);
+    Communication::Email* temp=target->NewestEmail;
+    while(temp!=NULL){
+        temp=temp->Older_Email;
+        delete target->NewestEmail;
+        target->NewestEmail=temp;
+    }
+    target->NewestEmail=NULL;
+
+    if(target->previous!=NULL){
+        target->previous->next=target->next;
+    }
+    if(target->next!=NULL){
+        target->next->previous=target->previous;
+    }
+    delete target;
+    return;
+}
 
 
-
+int main(){
+return 0;
+}
 
