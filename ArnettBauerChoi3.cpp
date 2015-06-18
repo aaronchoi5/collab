@@ -18,6 +18,7 @@ Postconditions:
 #include<cstdlib>
 #include<ctime>
 #include<string>
+#include<vector>
 
 /*=======================================================================================================================*/
 //Inbox Class
@@ -44,12 +45,12 @@ private:
             //These pointers navigate the linked list.
             Email *Older_Email; // "*next"
             Email *Newer_Email; // "*previous"
-        };
+        };//End Email
 
         //This is the pointer that points to the front of an "Email" string (or top of the "Email" stack).
         Email *NewestEmail; // "*head" (or "*top" of stack) of "Email"
 
-    };
+    };//End Communication
 
     Communication *NewestComm; //Points to first Communication ("*top" of stack)
 
@@ -191,31 +192,22 @@ Inbox::~Inbox(){ //I'm assuming I have to rework this so that the object is dele
 //InsertEmail()
 void Inbox::InsertEmail(){
 
-    struct StackOfStrings{
-        std::string StringData;
-        StackOfStrings *NextString;
-    };
+    std::vector<std::string> ArrOfStrs; //"Array Of Strings"
+    std::string UserInput
 
-    int NumOfStrings = 0;
-    StackOfStrings *top;
-    StackOfStrings *Subject_IO = new StackOfStrings();
-    top = Subject_IO->NextString;
+    std::cout << "Enter the subject of your email. (Type \"done\" to finish)\n";
+    do{
+        std::getline(std::cin, UserInput);
+        ArrOfStrs.push_back(UserInput);
+    }while(UserInput != "done");
 
 
-    while ((Subject_IO->StringData) != "done"){
-        Subject_IO = Subject_IO->NextString;
-        std::cout << "Enter the subject of your email. (Input \"done\" to finish)";
-        std::getline(std::cin, Subject_IO->StringData);
-        NumOfStrings++;
-    }
+
 
 
 
 
 }
-
-
-
 
 
 
