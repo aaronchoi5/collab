@@ -66,7 +66,7 @@ public:
     void DeleteCommunication(string subject); //Deletes a communication having a given subject.
 /*!!!*/    Communication* SearchCommunication(string keyword); //Searches Inbox for a given Subject, will ask user for subject.
 //The above function will be the tricky, please be sure to verify that it is correct.
-    void DisplayInpox();
+    void DisplayInbox();
 };//End Inbox
 
 /*=======================================================================================================================*/
@@ -247,7 +247,7 @@ Inbox::Communication* Inbox::SearchCommunication(string keyword){
     while(commPointer->Subject != keyword && commPointer->next != NULL){
         commPointer = commPointer->next;
     }
-    if(commPointer == keyword && commPointer->next == NULL){
+    if(commPointer->Subject == keyword && commPointer->next == NULL){
         return commPointer;
     }
     else if(commPointer->next == NULL){
@@ -285,12 +285,46 @@ void Inbox::DeleteCommunication(string subject){
     delete target;
     return;
 }
+    void Inbox::DisplayInbox(){
+      Communication* commPointer = NewestComm;
+      vector<string> ArrOfSubjects;
+      vector<int> NumOfEmails;
+      
+      while(commPointer->next != NULL){
+          ArrOfSubjects.push_back(commPointer->Subject);
+          NumOfEmails.push_back(commPointer->Number_of_Emails);
+          commPointer = commPointer->next;
+      }
+      
+      for(int i = 0; i < Number_of_Comms; i++){
+        cout << ArrOfSubjects[i] << ":    " << NumOfEmails[i];
+      }
 
-
+      return;
+  }
 int main(){
+    Inbox gmail;
+    string pikachu = "pikachu";
+    
+    while(pikachu !="raichu"){
+      cout << "Enter a command: ";
+      getline(cin, pikachu);
+      if(pikachu == "Display"){
+        gmail.DisplayInbox();
+      }
+      else if(pikachu == "Insert"){
+        gmail.InsertEmail();
+      }
+      else if(pikachu == "Delete"){
+        string pokeball = "Mew";
+        cout << "So you wanna get rid of stuff eh? It'll cost 3 big ones. Enter your subject.";
+        getline(cin, pokeball);
+        gmail.DeleteCommunication(pokeball);
+      }
+      
+    }
+      
 
 
-
-
-    return 0;
-}
+      return 0;
+  }
