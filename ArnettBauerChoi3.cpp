@@ -3,15 +3,13 @@ Authors: Austin Arnett, Aaron Choi, Brian Bauer
 Course: Data Structures
 Instructor: Anca Ralescu
 TA: Suryadip Chakraborty
-Abstract:
-Preconditions:
-Postconditions:
+Abstract: This program creates a gmail of given communications from the user. the program counts the subjects with the
+    same name and will let the user know how many emails are within a given communication. Once the user is done with
+    creating the first gmail, the copy constructor copies gmail and creates "Copymail", where you are able to test or
+    verify that the copy constructor works, or add more to Copymail.
+Preconditions: User commands - "Display", "Insert", "Delete", and "Finish". Follow on-screen commands to add subjects.
+Postconditions: An email to review all the subjects you entered.
 */
-// To Aaron and Brian:
-//    The code where I am unsure of what I'm doing is marked with /*!!!*/. you may want to pay extra attention to these
-// areas. I'm thinking the biggest problems in the code will be dereferencing pointers. There are a lot of nested pointers.
-// Just make sure we delete all the comments where we are informing each other by the end, and try to use /*!!!*/ when
-// informing one another.
 
 #include<iostream>
 #include<iomanip>
@@ -62,10 +60,10 @@ public:
     Inbox(const Inbox& object); //Copy constructor, unsure of what to name the object. Maybe just "object"?
 
     //Main methods for Inbox.
+    void Menu();
     void InsertEmail(); //Prompts user for email information and adds it to linked list(s)
     void DeleteCommunication(string subject); //Deletes a communication having a given subject.
-/*!!!*/    Communication* SearchCommunication(string keyword); //Searches Inbox for a given Subject, will ask user for subject.
-//The above function will be the tricky, please be sure to verify that it is correct.
+    Communication* SearchCommunication(string keyword); //Searches Inbox for a given Subject, will ask user for subject.
     void DisplayInbox();
 };//End Inbox
 
@@ -81,8 +79,6 @@ Inbox::Inbox(){
 /*It should be noted that CommTraveler and EmailTraveler travel through the object's pointers
     to acquire data. These pointers are not in any way related to the new Inbox being made.*/
 Inbox::Inbox(const Inbox& object){
-/*!!!*/ // This whole constructor is something that needs to be checked for problems.
-//         fairly sure it is officially correct. Fingers crossed (6/18/2015)
     Number_of_Comms = object.Number_of_Comms;
 
     //CommTraveler will travel through object's Comm Linked List to acquire data.
@@ -139,10 +135,17 @@ Inbox::Inbox(const Inbox& object){
         //Adjust back end
         TempEmail->Older_Email = NULL;                           //Set last "*next" to NULL
 
+
         //Adjust front end
-        newComm->NewestEmail = newComm->NewestEmail->Older_Email;//Move head from NULL node to first node
-        delete newComm->NewestEmail->Newer_Email;                //Delete initial NULL node;
-        newComm->NewestEmail->Newer_Email = NULL;                //Set first "*previous" to NULL
+        if(newComm->NewestEmail->Older_Email != NULL){
+            newComm->NewestEmail = newComm->NewestEmail->Older_Email;//Move head from NULL node to first node
+            delete newComm->NewestEmail->Newer_Email;                //Delete initial NULL node;
+            newComm->NewestEmail->Newer_Email = NULL;                //Set first "*previous" to NULL
+        }
+        else{
+            delete newComm->NewestEmail;
+            newComm->NewestEmail = NULL;
+        }
 
 /*----------------------------------------------End Email Linked List Setup----------------------------------------------*/
 
@@ -154,13 +157,20 @@ Inbox::Inbox(const Inbox& object){
 
         CommTraveler = CommTraveler->next;//Progress to the next communication
     }
+
     //Adjust back end
     TempComm->next = NULL;//Set last "*next" to NULL
 
     //Adjust front end
-    NewestComm = NewestComm->next;//Move head from NULL node to first node
-    delete NewestComm->previous;  //Delete initial NULL node
-    NewestComm->previous = NULL;  //Set first "*previous to NULL
+    if(NewestComm->next != NULL){
+        NewestComm = NewestComm->next;//Move head from NULL node to first node
+        delete NewestComm->previous;  //Delete initial NULL node
+        NewestComm->previous = NULL;  //Set first "*previous to NULL
+    }
+    else{
+        delete NewestComm;
+        NewestComm = NULL;
+    }
 }//End Copy Constructor
 
 /*=======================================================================================================================*/
@@ -207,6 +217,7 @@ void Inbox::InsertEmail(){
             SubjectGiven->Number_of_Emails = 1;
             SubjectGiven->next = NewestComm;
             SubjectGiven->previous = NULL;
+            SubjectGiven->NewestEmail = NULL;
             if(NewestComm != NULL){
                 NewestComm->previous = SubjectGiven;
             }
@@ -258,7 +269,7 @@ Inbox::Communication* Inbox::SearchCommunication(string keyword){
         return NULL;
     }
     return commPointer;
-}
+}//End SearchCommunication()
 
 /*=======================================================================================================================*/
 //DeleteCommunication(string)
@@ -296,7 +307,7 @@ void Inbox::DeleteCommunication(string subject){
     delete target;
     Number_of_Comms--;
     return;
-}
+}//End DeleteCommunication(string)
 
 /*=======================================================================================================================*/
 //DisplayInbox()
@@ -315,28 +326,27 @@ void Inbox::DisplayInbox(){
     }
 
     return;
-}
+}//End DisplayInbox()
 
 /*=======================================================================================================================*/
-//main()
-int main(){
-    Inbox gmail;
+//Menu()
+void Inbox::Menu(){
     string Selection;
 
     while(Selection !="Finish"){
       cout << "Enter a command: ";
       getline(cin, Selection);
       if(Selection == "Display"){
-        gmail.DisplayInbox();
+        DisplayInbox();
       }
       else if(Selection == "Insert"){
-        gmail.InsertEmail();
+        InsertEmail();
       }
       else if(Selection == "Delete"){
         string delsubj;
         cout << "Enter the subject you want to delete: ";
         getline(cin, delsubj);
-        gmail.DeleteCommunication(delsubj);
+        DeleteCommunication(delsubj);
       }
       else if(Selection == "Finish"){
         string confirmation;
@@ -350,6 +360,17 @@ int main(){
         cout << "Unrecognized command. Please read preconditions for commands.\n";
       }
     }
-      return 0;
-  }
+}//End Menu()
+
+/*=======================================================================================================================*/
+//main()
+int main(){
+    Inbox gmail;
+    gmail.Menu();
+
+    Inbox Copymail(gmail);
+    Copymail.Menu();
+
+    return 0;
+}//End main()
 /*======================================================END PROGRAM======================================================*/
