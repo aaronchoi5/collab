@@ -3,15 +3,13 @@ Authors: Austin Arnett, Aaron Choi, Brian Bauer
 Course: Data Structures
 Instructor: Anca Ralescu
 TA: Suryadip Chakraborty
-Abstract:
-Preconditions:
-Postconditions:
+Abstract: This program creates a gmail of given communications from the user. the program counts the subjects with the
+    same name and will let the user know how many emails are within a given communication. Once the user is done with
+    creating the first gmail, the copy constructor copies gmail and creates "Copymail", where you are able to test or
+    verify that the copy constructor works, or add more to Copymail.
+Preconditions: User commands - "Display", "Insert", "Delete", and "Finish". Follow on-screen commands to add subjects.
+Postconditions: An email to review all the subjects you entered.
 */
-// To Aaron and Brian:
-//    The code where I am unsure of what I'm doing is marked with /*!!!*/. you may want to pay extra attention to these
-// areas. I'm thinking the biggest problems in the code will be dereferencing pointers. There are a lot of nested pointers.
-// Just make sure we delete all the comments where we are informing each other by the end, and try to use /*!!!*/ when
-// informing one another.
 
 #include<iostream>
 #include<iomanip>
@@ -62,10 +60,10 @@ public:
     Inbox(const Inbox& object); //Copy constructor, unsure of what to name the object. Maybe just "object"?
 
     //Main methods for Inbox.
+    void Menu();
     void InsertEmail(); //Prompts user for email information and adds it to linked list(s)
     void DeleteCommunication(string subject); //Deletes a communication having a given subject.
-/*!!!*/    Communication* SearchCommunication(string keyword); //Searches Inbox for a given Subject, will ask user for subject.
-//The above function will be the tricky, please be sure to verify that it is correct.
+    Communication* SearchCommunication(string keyword); //Searches Inbox for a given Subject, will ask user for subject.
     void DisplayInbox();
 };//End Inbox
 
@@ -81,8 +79,6 @@ Inbox::Inbox(){
 /*It should be noted that CommTraveler and EmailTraveler travel through the object's pointers
     to acquire data. These pointers are not in any way related to the new Inbox being made.*/
 Inbox::Inbox(const Inbox& object){
-/*!!!*/ // This whole constructor is something that needs to be checked for problems.
-//         fairly sure it is officially correct. Fingers crossed (6/18/2015)
     Number_of_Comms = object.Number_of_Comms;
 
     //CommTraveler will travel through object's Comm Linked List to acquire data.
@@ -139,10 +135,17 @@ Inbox::Inbox(const Inbox& object){
         //Adjust back end
         TempEmail->Older_Email = NULL;                           //Set last "*next" to NULL
 
+
         //Adjust front end
-        newComm->NewestEmail = newComm->NewestEmail->Older_Email;//Move head from NULL node to first node
-        delete newComm->NewestEmail->Newer_Email;                //Delete initial NULL node;
-        newComm->NewestEmail->Newer_Email = NULL;                //Set first "*previous" to NULL
+        if(newComm->NewestEmail->Older_Email != NULL){
+            newComm->NewestEmail = newComm->NewestEmail->Older_Email;//Move head from NULL node to first node
+            delete newComm->NewestEmail->Newer_Email;                //Delete initial NULL node;
+            newComm->NewestEmail->Newer_Email = NULL;                //Set first "*previous" to NULL
+        }
+        else{
+            delete newComm->NewestEmail;
+            newComm->NewestEmail = NULL;
+        }
 
 /*----------------------------------------------End Email Linked List Setup----------------------------------------------*/
 
@@ -154,21 +157,25 @@ Inbox::Inbox(const Inbox& object){
 
         CommTraveler = CommTraveler->next;//Progress to the next communication
     }
+
     //Adjust back end
     TempComm->next = NULL;//Set last "*next" to NULL
 
     //Adjust front end
-    NewestComm = NewestComm->next;//Move head from NULL node to first node
-    delete NewestComm->previous;  //Delete initial NULL node
-    NewestComm->previous = NULL;  //Set first "*previous to NULL
+    if(NewestComm->next != NULL){
+        NewestComm = NewestComm->next;//Move head from NULL node to first node
+        delete NewestComm->previous;  //Delete initial NULL node
+        NewestComm->previous = NULL;  //Set first "*previous to NULL
+    }
+    else{
+        delete NewestComm;
+        NewestComm = NULL;
+    }
 }//End Copy Constructor
 
 /*=======================================================================================================================*/
 //Destructor
-Inbox::~Inbox(){ //I'm assuming I have to rework this so that the object is deleted. e.g. delete *NewestEmail.
-/*!!!*/ //unsure of what delete does in it's entirety. Assigning NULL does not deallocate memory.
-        //Update: I know what delete does completely now, and I'm working on fixing this destructor.
-        //Fixed.
+Inbox::~Inbox(){
     if(NewestComm != NULL){
         while(NewestComm->next!=NULL){
             //Delete emails within communication, if there exist any.
@@ -177,16 +184,16 @@ Inbox::~Inbox(){ //I'm assuming I have to rework this so that the object is dele
                     NewestComm->NewestEmail = NewestComm->NewestEmail->Older_Email;
                     delete NewestComm->NewestEmail->Newer_Email;
                 }
+                delete NewestComm->NewestEmail;
             }
-            delete NewestComm->NewestEmail;
 
             //Delete communication node
             NewestComm = NewestComm->next;
             delete NewestComm->previous;
         }
+        delete NewestComm;
     }
-    Number_of_Comms = 0;/*!!!*///How to get rid of int?
-    delete NewestComm;
+    Number_of_Comms = 0;
 }//End Destructor
 
 /*=======================================================================================================================*/
@@ -202,7 +209,7 @@ void Inbox::InsertEmail(){
     }while(UserInput != "done");
 
     Communication* SubjectGiven;
-    for(int i = 0; i < ArrOfStrs.size(); i++){
+    for(int i = 0; i < ArrOfStrs.size()-1; i++){
         SubjectGiven = SearchCommunication(ArrOfStrs[i]);
         if(SubjectGiven == NULL){
             SubjectGiven = new Communication;
@@ -210,7 +217,12 @@ void Inbox::InsertEmail(){
             SubjectGiven->Number_of_Emails = 1;
             SubjectGiven->next = NewestComm;
             SubjectGiven->previous = NULL;
+            SubjectGiven->NewestEmail = NULL;
+            if(NewestComm != NULL){
+                NewestComm->previous = SubjectGiven;
+            }
             NewestComm = SubjectGiven;
+            Number_of_Comms++;
         }
         else{
             //Increment number of Emails
@@ -243,6 +255,9 @@ void Inbox::InsertEmail(){
 /*=======================================================================================================================*/
 //SearchCommunication()
 Inbox::Communication* Inbox::SearchCommunication(string keyword){
+    if(NewestComm == NULL){
+        return NULL;
+    }
     Communication* commPointer = NewestComm;
     while(commPointer->Subject != keyword && commPointer->next != NULL){
         commPointer = commPointer->next;
@@ -254,7 +269,7 @@ Inbox::Communication* Inbox::SearchCommunication(string keyword){
         return NULL;
     }
     return commPointer;
-}
+}//End SearchCommunication()
 
 /*=======================================================================================================================*/
 //DeleteCommunication(string)
@@ -266,16 +281,23 @@ void Inbox::DeleteCommunication(string subject){
         return;
     }
 
+    //Nullify data
+    target->Subject = "";
+    target->Number_of_Emails = 0;
+
     //Delete Email list
-    Communication::Email* temp = target->NewestEmail;
-    while(temp != NULL){
-        temp = temp->Older_Email;
+    if(target->NewestEmail != NULL){
+        while(target->NewestEmail->Older_Email != NULL){
+            target->NewestEmail = target->NewestEmail->Older_Email;
+            delete target->NewestEmail->Newer_Email;
+        }
         delete target->NewestEmail;
-        target->NewestEmail = temp;
     }
-    target->NewestEmail = NULL;
 
     //Adjust Comm pointers
+    if(target == NewestComm){
+        NewestComm = NewestComm->next;
+    }
     if(target->previous != NULL){
         target->previous->next = target->next;
     }
@@ -283,48 +305,72 @@ void Inbox::DeleteCommunication(string subject){
         target->next->previous = target->previous;
     }
     delete target;
+    Number_of_Comms--;
     return;
-}
-    void Inbox::DisplayInbox(){
-      Communication* commPointer = NewestComm;
-      vector<string> ArrOfSubjects;
-      vector<int> NumOfEmails;
-      
-      while(commPointer->next != NULL){
-          ArrOfSubjects.push_back(commPointer->Subject);
-          NumOfEmails.push_back(commPointer->Number_of_Emails);
-          commPointer = commPointer->next;
-      }
-      
-      for(int i = 0; i < Number_of_Comms; i++){
-        cout << ArrOfSubjects[i] << ":    " << NumOfEmails[i];
-      }
+}//End DeleteCommunication(string)
 
-      return;
-  }
+/*=======================================================================================================================*/
+//DisplayInbox()
+void Inbox::DisplayInbox(){
+    if(NewestComm == NULL){
+        cout << "Nothing to display.\n\n";
+        return;
+    }
+
+    Communication *DisplayPointer;
+    DisplayPointer = NewestComm;
+
+    for(int i = 0; i < Number_of_Comms; i++){
+        cout << DisplayPointer->Subject << " - " << DisplayPointer->Number_of_Emails << "\n";
+        DisplayPointer = DisplayPointer->next;
+    }
+
+    return;
+}//End DisplayInbox()
+
+/*=======================================================================================================================*/
+//Menu()
+void Inbox::Menu(){
+    string Selection;
+
+    while(Selection !="Finish"){
+      cout << "Enter a command: ";
+      getline(cin, Selection);
+      if(Selection == "Display"){
+        DisplayInbox();
+      }
+      else if(Selection == "Insert"){
+        InsertEmail();
+      }
+      else if(Selection == "Delete"){
+        string delsubj;
+        cout << "Enter the subject you want to delete: ";
+        getline(cin, delsubj);
+        DeleteCommunication(delsubj);
+      }
+      else if(Selection == "Finish"){
+        string confirmation;
+        cout << "Confirm Exit? (y/n)\n";
+        getline(cin, confirmation);
+        if(confirmation != "y"){
+            Selection = "Not Exiting";
+        }
+      }
+      else{
+        cout << "Unrecognized command. Please read preconditions for commands.\n";
+      }
+    }
+}//End Menu()
+
+/*=======================================================================================================================*/
+//main()
 int main(){
     Inbox gmail;
-    string pikachu = "pikachu";
-    
-    while(pikachu !="raichu"){
-      cout << "Enter a command: ";
-      getline(cin, pikachu);
-      if(pikachu == "Display"){
-        gmail.DisplayInbox();
-      }
-      else if(pikachu == "Insert"){
-        gmail.InsertEmail();
-      }
-      else if(pikachu == "Delete"){
-        string pokeball = "Mew";
-        cout << "So you wanna get rid of stuff eh? It'll cost 3 big ones. Enter your subject.";
-        getline(cin, pokeball);
-        gmail.DeleteCommunication(pokeball);
-      }
-      
-    }
-      
+    gmail.Menu();
 
+    Inbox Copymail(gmail);
+    Copymail.Menu();
 
-      return 0;
-  }
+    return 0;
+}//End main()
+/*======================================================END PROGRAM======================================================*/
