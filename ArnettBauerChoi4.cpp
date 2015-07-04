@@ -27,11 +27,11 @@ void insert(vector<T> moo){
 template <typename T>
 
 void bubble(vector<T> mort){
-  
+
   bool sorted = false;
   int maxIdx = mort.size() - 1;
   while (!sorted) {
-      sorted = true;                 
+      sorted = true;
     for (int i = 0; i < mort.size() - 1; i++) {
       if (mort[i]> mort[i + 1]) {
         sorted = false;
@@ -66,7 +66,7 @@ void merge(vector<T> &a, vector<T> &b, vector<T> &ret){
   }
 }
 
-template <typename T> 
+template <typename T>
 void mergeSort(vector<T> &v){ // In place!
   // base case!
   if(v.size() <= 1){
@@ -102,7 +102,7 @@ void quickSort(vector<T> &v ) {
       int pivot = v[(left + right) / 2];
       int left = 0;
       int right = v.size()-1;
- 
+
       /* partition section */
       while (i <= j) {
             while (v[i] < pivot)
@@ -117,13 +117,32 @@ void quickSort(vector<T> &v ) {
                   j--;
             }
       };
- 
+
       /* recursion section*/
       if (left < j)
             quickSort(arr, left, j);
       if (i < right)
             quickSort(arr, i, right);
 }
+
+unsigned int menuGenerator(){
+    cout<<"Authors: Austin Arnett, Brian Bauer, Aaron Choi."<<endl;
+    cout<<"Description:  This program is meant to analyze and compare the effectiveness of various sorting algorithms against each other.  ";
+    cout<<"The algorithms compared are Merge Sort, Quick Sort, Insertion Sort, and Bubble Sort.  The user is asked to enter a threshold value ";
+    cout<<"which will determine how long each algorithm is given to sort the elements.  The user will then be asked for the size of ";
+    cout<<"the vector to be sorted.  Sizes of over 100 elements will be automatically generated, while if the user inputs a size less than ";
+    cout<<"or equal to 100 the user will be given the option to either insert a vector manually or to have one automatically generated.  "<<endl;
+
+    cout<<"BEGIN"<<endl;
+    cout<<"Please enter the threshold value (in seconds): ";  //Threshold value is probably the length of time the algorithms are given before cut off.
+    int threshold;
+    cin>>threshold; cout<<endl;
+
+    cout<<"Enter the quantity of elements to be sorted: ";
+    unsigned int elements;
+    cin>>elements; cout<<endl;
+    return;
+    }
 
 int main(){
 
