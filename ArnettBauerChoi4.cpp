@@ -92,6 +92,39 @@ void mergeSort(vector<T> &v){ // In place!
   v.clear();
   merge(left, right, v);
 }
+
+template <typename T>
+void quickSort(vector<T> &v ) {
+      int left = 0;
+      int right = v.size()-1
+      int i = left, j = right;
+      T tmp;
+      int pivot = v[(left + right) / 2];
+      int left = 0;
+      int right = v.size()-1;
+ 
+      /* partition section */
+      while (i <= j) {
+            while (v[i] < pivot)
+                  i++;
+            while (v[j] > pivot)
+                  j--;
+            if (i <= j) {
+                  tmp = v[i];
+                  v[i] = v[j];
+                  v[j] = tmp;
+                  i++;
+                  j--;
+            }
+      };
+ 
+      /* recursion section*/
+      if (left < j)
+            quickSort(arr, left, j);
+      if (i < right)
+            quickSort(arr, i, right);
+}
+
 int main(){
 
   return 0;
