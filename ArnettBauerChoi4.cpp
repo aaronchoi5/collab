@@ -141,6 +141,34 @@ unsigned int menuGenerator(){
     cout<<"Enter the quantity of elements to be sorted: ";
     unsigned int elements;
     cin>>elements; cout<<endl;
+    vector<int> templist;
+    vector<int> thelist;
+    if(elements <= 100){
+        bool makelist=false;
+        cout<<"Would you like to manually enter the list? (1 for 'yes'/0 for 'no'.  If '0', the list will be generated for you): ";
+        if(makelist){
+            cout<<"Please begin entering the list:"<<endl;
+            int tempval;
+            for(unsigned int k=0; k<elements; k++){  // user must enter as many elements as they ask for.
+                cout<<k<<": ";
+                cin>>tempval;
+                thelist.push_back(tempval); // there is no check to make sure the entry is valid.
+            }
+        }
+        else if(!makelist){
+            thelist=listGenerator(templist);  //the user said no to manually made list.  generate a list for them.
+        }
+        else{
+            cout<<"invalid response"<<endl;
+            return;
+        }
+        bool display=false;
+        cout<<"Would you like the list to be displayed? (1 for 'yes', 0 for 'no': ";
+        cin>>display
+        if(display){
+            desplayList();
+        }
+    }
     return;
     }
 
