@@ -96,12 +96,12 @@ void mergeSort(vector<T> &v){ // In place!
 template <typename T>
 void quickSort(vector<T> &v ) {
       int left = 0;
-      int right = v.size()-1
+      int right = v.size()-1;
       int i = left, j = right;
       T tmp;
       int pivot = v[(left + right) / 2];
-      int left = 0;
-      int right = v.size()-1;
+      left = 0;
+      right = v.size()-1;
 
       /* partition section */
       while (i <= j) {
@@ -125,7 +125,30 @@ void quickSort(vector<T> &v ) {
             quickSort(arr, i, right);
 }
 
-unsigned int menuGenerator(){
+void displayList(vector<int> lelist){
+    cout<<"[";
+    for(unsigned int k=0; k<lelist.size()-1; k++){
+        cout<<lelist[k]<<",";
+    }
+    cout<<lelist[lelist.size()-1]<<"]"<<endl;
+    return;
+}
+
+vector<int> listGenerator(vector<int> A){      //assigns values to the inputted array.
+    for(int k=0; k<A.size(); k++){
+        A.push_back(k);
+    }
+    int temp;
+    for(int k=0; k<A.size()-1; k=k+2){
+        temp=A[k+1];
+        A[k+1]=A[k];
+        A[k]=temp;
+    }
+
+    return A;
+}
+
+void menuGenerator(vector<int> emptylist){
     cout<<"Authors: Austin Arnett, Brian Bauer, Aaron Choi."<<endl;
     cout<<"Description:  This program is meant to analyze and compare the effectiveness of various sorting algorithms against each other.  ";
     cout<<"The algorithms compared are Merge Sort, Quick Sort, Insertion Sort, and Bubble Sort.  The user is asked to enter a threshold value ";
@@ -134,7 +157,7 @@ unsigned int menuGenerator(){
     cout<<"or equal to 100 the user will be given the option to either insert a vector manually or to have one automatically generated.  "<<endl;
 
     cout<<"BEGIN"<<endl;
-    cout<<"Please enter the threshold value (in seconds): ";  //Threshold value is probably the length of time the algorithms are given before cut off.
+    cout<<"Please enter the threshold value (in seconds): ";  //Threshold value is length for use by hybrid
     int threshold;
     cin>>threshold; cout<<endl;
 
@@ -146,6 +169,7 @@ unsigned int menuGenerator(){
     if(elements <= 100){
         bool makelist=false;
         cout<<"Would you like to manually enter the list? (1 for 'yes'/0 for 'no'.  If '0', the list will be generated for you): ";
+        cin>>makelist;
         if(makelist){
             cout<<"Please begin entering the list:"<<endl;
             int tempval;
@@ -163,10 +187,10 @@ unsigned int menuGenerator(){
             return;
         }
         bool display=false;
-        cout<<"Would you like the list to be displayed? (1 for 'yes', 0 for 'no': ";
-        cin>>display
+        cout<<"Would you like the list to be displayed? (1 for 'yes', 0 for 'no'): ";
+        cin>>display;
         if(display){
-            desplayList();
+            displayList(thelist);
         }
     }
     return;
