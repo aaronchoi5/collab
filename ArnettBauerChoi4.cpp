@@ -5,39 +5,41 @@
 
 #include "unistd.h"
 using namespace std;
-
+int counter=0;
 template <typename T>
 //takes in a vector of any type and does insert sort:
-void insert(vector<T> &moo){
+void insertionSort(vector<T> &v){
   unsigned int i = 0;
   unsigned int j = 0;
   T temp = 0;
-  for(i = 1; i < moo.size(); i++){
+  for(i = 1; i < v.size(); i++){
     j = i;
     //when i goes up temp stores the value at array[j] and assigns the one before it to array[j] and then the [j-1] becomes the old [j] write it out if you wanna see
-    while(j > 0 && moo[j-1] > moo[j]){
-      temp = moo[j];
-      moo[j] = moo[j-1];
-      moo[j-1] = temp;
+    while(j > 0 && v[j-1] > v[j]){
+      temp = v[j];
+      v[j] = v[j-1];
+      v[j-1] = temp;
       j--;
+      counter++;
     }
   }
 }
 
 template <typename T>
 
-void bubble(vector<T> &mort){
+void bubbleSort(vector<T> &v){
 
   bool sorted = false;
-  int maxIdx = mort.size() - 1;
+  int maxIdx = v.size() - 1;
   while (!sorted) {
       sorted = true;
-    for (int i = 0; i < mort.size() - 1; i++) {
-      if (mort[i]> mort[i + 1]) {
+    for (int i = 0; i < v.size() - 1; i++) {
+      counter++;  //number of comparisons
+      if (v[i]> v[i + 1]) {
         sorted = false;
-        T tmp = mort[i];
-        mort[i] = mort[i + 1];
-        mort[i + 1] = tmp;
+        T tmp = v[i];
+        v[i] = v[i + 1];
+        v[i + 1] = tmp;
     }
   }
     maxIdx--;
@@ -63,6 +65,7 @@ void merge(vector<T> &a, vector<T> &b, vector<T> &ret){
       ret.push_back(b[bi]);
       bi++;
     }
+    counter++;
   }
 }
 
@@ -94,14 +97,52 @@ void mergeSort(vector<T> &v){ // In place!
 }
 
 template <typename T>
+void mergeHybridSort(vector<T> &v, string smaller,int threshold){ // In place!
+  // base case!
+  
+  if(v.size() <= 1){
+    return;
+  }
+  if(v.size() < threshold){
+    if(smaller == "0"){
+      bubbleSort(v);
+      return;
+    }
+    else if(smaller == "1"){
+      insertionSort(v);
+      return;
+    }
+  }
+  // cut list into two halves
+  unsigned int middle = v.size() / 2;
+  vector<T> left;
+  left.reserve(v.size());
+  vector<T> right;
+  right.reserve(v.size());
+  for(unsigned int i = 0; i < v.size() ;i++){
+    if(i < middle){
+      left.push_back(v[i]);
+    }else{
+      right.push_back(v[i]);
+    }
+  }
+
+  mergeHybridSort(left, smaller, threshold);
+  mergeHybridSort(right, smaller, threshold);
+  // merge them together!
+  v.clear();
+  merge(left, right, v);
+}
+
+
+template <typename T>
 void quickSort(vector<T> &v, int left, int right) {
       int i = left, j = right;
       T tmp;
-      int pivot = v[(left + right) / 2];
-
-
+      T pivot = v[(left + right) / 2];
       /* partition section */
       while (i <= j) {
+            counter++;
             while (v[i] < pivot)
                   i++;
             while (v[j] > pivot)
@@ -121,17 +162,53 @@ void quickSort(vector<T> &v, int left, int right) {
       if (i < right)
             quickSort(v, i, right);
 }
+template <typename T>
+void quickHybridSort(vector<T> &v, int left, int right, string smaller ,int threshold) {
+      int i = left, j = right;
+      T tmp;
+      T pivot = v[(left + right) / 2];
+      counter++;
+      if(v.size() < threshold){
+          if(smaller == "0"){
+            bubbleSort(v);
+          }
+          else if(smaller == "1"){
+            insertionSort(v);
+          }
+       }
 
-void displayList(vector<int> &lelist){
+      /* partition section */
+      while (i <= j) {
+            while (v[i] < pivot)
+                  i++;
+            while (v[j] > pivot)
+                  j--;
+            if (i <= j) {
+                  tmp = v[i];
+                  v[i] = v[j];
+                  v[j] = tmp;
+                  i++;
+                  j--;
+            }
+      };
+
+      /* recursion section*/
+      if (left < j)
+            quickHybridSort(v, left, j, smaller, threshold);
+      if (i < right)
+            quickHybridSort(v, i, right, smaller, threshold);
+  }
+template<typename T>
+void displayList(vector<T> &v){
     cout<<"[";
-    for(unsigned int k=0; k<lelist.size()-1; k++){
-        cout<<lelist[k]<<",";
+    for(unsigned int k=0; k<v.size()-1; k++){
+        cout<<v[k]<<",";
     }
-    cout<<lelist[lelist.size()-1]<<"]"<<endl;
+    cout<<v[v.size()-1]<<"]"<<endl;
     return;
 }
-
-vector<int> listGenerator(vector<int> &A, int elements){      //assigns values to the inputted array.
+template<typename T>
+vector<T> listGenerator(vector<T> &A, int elements){      //assigns values to the inputted array.
     for(int k=0; k<elements; k++){
         A.push_back(k);
     }
@@ -144,12 +221,26 @@ vector<int> listGenerator(vector<int> &A, int elements){      //assigns values t
 
     return A;
 }
+template <typename T>
+void hybridSort(vector<T> &v, string larger, string smaller, int threshold){
+  
+  
+  if(v.size() > threshold){
+    if(larger == "0"){
+      mergeHybridSort(v, smaller, threshold);
+      return;
+    }
+    else if(larger == "1"){ 
+      quickHybridSort(v, 0, v.size()-1, smaller, threshold);
+      return;
+    }
+  }
 
-vector<int> hybridSort(vector<int> &derVektor){
-return derVektor;
+
+  
 }
-
-bool menuGenerator(vector<int> &emptylist){
+template <typename T>
+void menuGenerator(){
     cout<<"Authors: Austin Arnett, Brian Bauer, Aaron Choi."<<endl;
     cout<<"Description:  This program is meant to analyze and compare the effectiveness of various sorting algorithms against each other.  ";
     cout<<"The algorithms compared are Merge Sort, Quick Sort, Insertion Sort, and Bubble Sort.  The user is asked to enter a threshold value ";
@@ -166,60 +257,105 @@ bool menuGenerator(vector<int> &emptylist){
     unsigned int elements;
     cin>>elements; cout<<endl;
 
-    bool hybridbool=false;
-    if(elements>threshold){
-        hybridbool=true;
-    }
-
-    vector<int> templist;
-    vector<int> thelist;
+    vector<T> templist;
+    vector<T> thelist;
     if(elements <= 100){
         bool makelist=false;
         cout<<"Would you like to manually enter the list? (1 for 'yes', 0 for 'no'.  If '0', the list will be generated for you): ";
         cin>>makelist;
         if(makelist){
-            cout<<"Please begin entering the list:"<<endl;
-            int tempval;
+            cout<<"Please begin entering the list:" << endl;
+            T tempval;
             for(unsigned int k=0; k<elements; k++){  // user must enter as many elements as they ask for.
                 cout<<k<<": ";
                 cin>>tempval;
                 thelist.push_back(tempval); // there is no check to make sure the entry is valid.
             }
-            emptylist=thelist;
         }
         else if(!makelist){
-            emptylist=listGenerator(templist, elements);  //the user said no to manually made list.  generate a list for them.
+            thelist=listGenerator(templist, elements);  //the user said no to manually made list.  generate a list for them.
         }
         else{
-            cout<<"invalid response"<<endl;
-            return hybridbool;
+            cout<<"invalid response start over"<<endl;
+            return;
         }
         bool display=false;
         cout<<"Would you like the list to be displayed? (1 for 'yes', 0 for 'no'): ";
         cin>>display;
         if(display){
-            displayList(emptylist);
+            displayList(thelist);
         }
+    }
 
+    
+    bool running = true;
+    do{
+      vector<T> copyvector = thelist; 
+      int choice;
+      cout << "What sort do you want to do?:" << endl;
+      cout << "1) Bubble Sort" << endl;
+      cout << "2) Insert Sort" << endl;
+      cout << "3) Quick Sort" << endl;
+      cout << "4) Merge Sort" << endl;
+      cout << "5) Hybrid Sort" << endl;
+      cin >> choice;
+      if(choice == 1){
+        bubbleSort(copyvector);
+        displayList(copyvector);
+      }
+      else if(choice == 2){
+        insertionSort(copyvector);
+        displayList(copyvector);
+      }
+      else if(choice == 3){
+        quickSort(copyvector,0, thelist.size()-1);
+        displayList(copyvector);
+      }
+      else if(choice == 4){
+        mergeSort(copyvector);
+        displayList(copyvector);
+      }
+      else if(choice == 5){
+        string larger = "";
+        string smaller = "";
+        cout << "What do you want the sort to be if the list is larger than the threshold?" << endl;
+        cout << "0) Merge Sort" << endl;
+        cout << "1) Quick Sort" << endl;
+        cin >> larger;
+        if(larger != "0" && larger != "1"){
+          cout << "You seem to have not been able to enter 0 or 1 please restart." << endl;
+          return;
+        }
+        cout << "What do you want the sort to be if the list is smaller than the threshold?" << endl;
+        cout << "0) Bubble Sort" << endl;
+        cout << "1) Insert Sort" << endl;
+        cin >> smaller; 
+        if(smaller != "0" && smaller != "1"){
+          cout << "You seem to have not been able to enter 0 or 1 please restart." << endl;
+          return;
+        }
+        hybridSort(copyvector,larger, smaller, threshold);
+        cout << "Original list: ";
+        displayList(thelist);
+        cout << endl;
+        cout << "Sorted list: ";
+        displayList(copyvector);
+        cout << endl;
+      }
+      cout<<"Number of comparisons: "<<counter<<endl;
+      cout << "Do you want to choose a sort again? Enter 1 if you want to and 0 if you do not.";
+      cin >> running;
+      counter=0;  //global variable counting number of comparisons.
+      
+
+      
     }
-    else{
-        emptylist=listGenerator(templist, elements);
-    }
-    return hybridbool;
+    while(running);
     }
 
 int main(){
-    vector<int> workeronni;
-    menuGenerator(workeronni);
-    quickSort(workeronni, 0, workeronni.size());
-    cout<<"sorted: "<<endl;
-    displayList(workeronni);
-/*    vector<int> pleaseronni;
-    listGenerator(pleaseronni, 11);
-    cout<<"list generated"<<endl;
-    displayList(pleaseronni);
-    insert(pleaseronni);
-    cout<<"after: ";
-    displayList(pleaseronni);*/
+
+    menuGenerator<int>();
+    
   return 0;
 }
