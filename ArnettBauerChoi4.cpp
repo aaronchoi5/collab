@@ -120,9 +120,9 @@ void quickSort(vector<T> &v ) {
 
       /* recursion section*/
       if (left < j)
-            quickSort(arr, left, j);
+            quickSort(v, left, j);
       if (i < right)
-            quickSort(arr, i, right);
+            quickSort(v, i, right);
 }
 
 void displayList(vector<int> lelist){
@@ -134,8 +134,8 @@ void displayList(vector<int> lelist){
     return;
 }
 
-vector<int> listGenerator(vector<int> A){      //assigns values to the inputted array.
-    for(int k=0; k<A.size(); k++){
+vector<int> listGenerator(vector<int> A, int elements){      //assigns values to the inputted array.
+    for(int k=0; k<elements; k++){
         A.push_back(k);
     }
     int temp;
@@ -148,7 +148,7 @@ vector<int> listGenerator(vector<int> A){      //assigns values to the inputted 
     return A;
 }
 
-void menuGenerator(vector<int> emptylist){
+bool menuGenerator(vector<int> emptylist){
     cout<<"Authors: Austin Arnett, Brian Bauer, Aaron Choi."<<endl;
     cout<<"Description:  This program is meant to analyze and compare the effectiveness of various sorting algorithms against each other.  ";
     cout<<"The algorithms compared are Merge Sort, Quick Sort, Insertion Sort, and Bubble Sort.  The user is asked to enter a threshold value ";
@@ -157,18 +157,24 @@ void menuGenerator(vector<int> emptylist){
     cout<<"or equal to 100 the user will be given the option to either insert a vector manually or to have one automatically generated.  "<<endl;
 
     cout<<"BEGIN"<<endl;
-    cout<<"Please enter the threshold value (in seconds): ";  //Threshold value is length for use by hybrid
+    cout<<"Please enter the threshold value for hybrid sort: ";  //Threshold value is length for use by hybrid
     int threshold;
     cin>>threshold; cout<<endl;
 
     cout<<"Enter the quantity of elements to be sorted: ";
     unsigned int elements;
     cin>>elements; cout<<endl;
+
+    bool hybridbool=false;
+    if(elements>threshold){
+        hybridbool=true;
+    }
+
     vector<int> templist;
     vector<int> thelist;
     if(elements <= 100){
         bool makelist=false;
-        cout<<"Would you like to manually enter the list? (1 for 'yes'/0 for 'no'.  If '0', the list will be generated for you): ";
+        cout<<"Would you like to manually enter the list? (1 for 'yes', 0 for 'no'.  If '0', the list will be generated for you): ";
         cin>>makelist;
         if(makelist){
             cout<<"Please begin entering the list:"<<endl;
@@ -178,25 +184,35 @@ void menuGenerator(vector<int> emptylist){
                 cin>>tempval;
                 thelist.push_back(tempval); // there is no check to make sure the entry is valid.
             }
+            emptylist=thelist;
         }
         else if(!makelist){
-            thelist=listGenerator(templist);  //the user said no to manually made list.  generate a list for them.
+            emptylist=listGenerator(templist, elements);  //the user said no to manually made list.  generate a list for them.
         }
         else{
             cout<<"invalid response"<<endl;
-            return;
+            return hybridbool;
         }
         bool display=false;
         cout<<"Would you like the list to be displayed? (1 for 'yes', 0 for 'no'): ";
         cin>>display;
         if(display){
-            displayList(thelist);
+            displayList(emptylist);
         }
+
     }
-    return;
+    else{
+        emptylist=listGenerator(templist, elements);
+    }
+    return hybridbool;
     }
 
 int main(){
+    vector<int> workeronni;
+    menuGenerator(workeronni);
+    insert(workeronni);
+    cout<<"sorted: "<<endl;
+    displayList(workeronni);
 
   return 0;
 }
