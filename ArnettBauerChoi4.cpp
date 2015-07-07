@@ -8,7 +8,7 @@ using namespace std;
 
 template <typename T>
 //takes in a vector of any type and does insert sort:
-void insert(vector<T> moo){
+void insert(vector<T> &moo){
   unsigned int i = 0;
   unsigned int j = 0;
   T temp = 0;
@@ -26,7 +26,7 @@ void insert(vector<T> moo){
 
 template <typename T>
 
-void bubble(vector<T> mort){
+void bubble(vector<T> &mort){
 
   bool sorted = false;
   int maxIdx = mort.size() - 1;
@@ -94,14 +94,11 @@ void mergeSort(vector<T> &v){ // In place!
 }
 
 template <typename T>
-void quickSort(vector<T> &v ) {
-      int left = 0;
-      int right = v.size()-1;
+void quickSort(vector<T> &v, int left, int right) {
       int i = left, j = right;
       T tmp;
       int pivot = v[(left + right) / 2];
-      left = 0;
-      right = v.size()-1;
+
 
       /* partition section */
       while (i <= j) {
@@ -125,7 +122,7 @@ void quickSort(vector<T> &v ) {
             quickSort(v, i, right);
 }
 
-void displayList(vector<int> lelist){
+void displayList(vector<int> &lelist){
     cout<<"[";
     for(unsigned int k=0; k<lelist.size()-1; k++){
         cout<<lelist[k]<<",";
@@ -134,7 +131,7 @@ void displayList(vector<int> lelist){
     return;
 }
 
-vector<int> listGenerator(vector<int> A, int elements){      //assigns values to the inputted array.
+vector<int> listGenerator(vector<int> &A, int elements){      //assigns values to the inputted array.
     for(int k=0; k<elements; k++){
         A.push_back(k);
     }
@@ -148,7 +145,11 @@ vector<int> listGenerator(vector<int> A, int elements){      //assigns values to
     return A;
 }
 
-bool menuGenerator(vector<int> emptylist){
+vector<int> hybridSort(vector<int> &derVektor){
+return derVektor;
+}
+
+bool menuGenerator(vector<int> &emptylist){
     cout<<"Authors: Austin Arnett, Brian Bauer, Aaron Choi."<<endl;
     cout<<"Description:  This program is meant to analyze and compare the effectiveness of various sorting algorithms against each other.  ";
     cout<<"The algorithms compared are Merge Sort, Quick Sort, Insertion Sort, and Bubble Sort.  The user is asked to enter a threshold value ";
@@ -210,9 +211,15 @@ bool menuGenerator(vector<int> emptylist){
 int main(){
     vector<int> workeronni;
     menuGenerator(workeronni);
-    insert(workeronni);
+    quickSort(workeronni, 0, workeronni.size());
     cout<<"sorted: "<<endl;
     displayList(workeronni);
-
+/*    vector<int> pleaseronni;
+    listGenerator(pleaseronni, 11);
+    cout<<"list generated"<<endl;
+    displayList(pleaseronni);
+    insert(pleaseronni);
+    cout<<"after: ";
+    displayList(pleaseronni);*/
   return 0;
 }
