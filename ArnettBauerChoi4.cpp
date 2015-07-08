@@ -2,10 +2,15 @@
 #include <vector>
 #include <iostream>
 #include <stdlib.h>
+#include <time.h>
 
 #include "unistd.h"
+
 using namespace std;
+
 int counter=0;
+
+
 template <typename T>
 //takes in a vector of any type and does insert sort:
 void insertionSort(vector<T> &v){
@@ -99,7 +104,7 @@ void mergeSort(vector<T> &v){ // In place!
 template <typename T>
 void mergeHybridSort(vector<T> &v, string smaller,int threshold){ // In place!
   // base case!
-  
+
   if(v.size() <= 1){
     return;
   }
@@ -209,35 +214,37 @@ void displayList(vector<T> &v){
 }
 template<typename T>
 vector<T> listGenerator(vector<T> &A, int elements){      //assigns values to the inputted array.
+
+    srand(time(0));
+    int number = 0;
+
     for(int k=0; k<elements; k++){
-        A.push_back(k);
-    }
-    int temp;
-    for(int k=0; k<A.size()-1; k=k+2){
-        temp=A[k+1];
-        A[k+1]=A[k];
-        A[k]=temp;
+        number = rand() % 1000;
+        A.push_back(number);
     }
 
     return A;
 }
 template <typename T>
 void hybridSort(vector<T> &v, string larger, string smaller, int threshold){
-  
-  
+
+
   if(v.size() > threshold){
     if(larger == "0"){
       mergeHybridSort(v, smaller, threshold);
       return;
     }
-    else if(larger == "1"){ 
+    else if(larger == "1"){
       quickHybridSort(v, 0, v.size()-1, smaller, threshold);
       return;
     }
   }
+  else{
+    cout << "Do not enter a threshold value greater than the size of the array!" << endl;
+  }
 
 
-  
+
 }
 template <typename T>
 void menuGenerator(){
@@ -287,10 +294,10 @@ void menuGenerator(){
         }
     }
 
-    
+
     bool running = true;
     do{
-      vector<T> copyvector = thelist; 
+      vector<T> copyvector = thelist;
       int choice;
       cout << "What sort do you want to do?:" << endl;
       cout << "1) Bubble Sort" << endl;
@@ -329,7 +336,7 @@ void menuGenerator(){
         cout << "What do you want the sort to be if the list is smaller than the threshold?" << endl;
         cout << "0) Bubble Sort" << endl;
         cout << "1) Insert Sort" << endl;
-        cin >> smaller; 
+        cin >> smaller;
         if(smaller != "0" && smaller != "1"){
           cout << "You seem to have not been able to enter 0 or 1 please restart." << endl;
           return;
@@ -346,9 +353,9 @@ void menuGenerator(){
       cout << "Do you want to choose a sort again? Enter 1 if you want to and 0 if you do not.";
       cin >> running;
       counter=0;  //global variable counting number of comparisons.
-      
 
-      
+
+
     }
     while(running);
     }
@@ -356,6 +363,6 @@ void menuGenerator(){
 int main(){
 
     menuGenerator<int>();
-    
+
   return 0;
 }
