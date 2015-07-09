@@ -228,8 +228,6 @@ vector<T> listGenerator(vector<T> &A, int elements){      //assigns values to th
 template <typename T>
 void hybridSort(vector<T> &v, string larger, string smaller, int threshold){
 
-
-  if(v.size() > threshold){
     if(larger == "0"){
       mergeHybridSort(v, smaller, threshold);
       return;
@@ -238,10 +236,8 @@ void hybridSort(vector<T> &v, string larger, string smaller, int threshold){
       quickHybridSort(v, 0, v.size()-1, smaller, threshold);
       return;
     }
-  }
-  else{
-    cout << "Do not enter a threshold value greater than the size of the array!" << endl;
-  }
+
+
 
 
 
