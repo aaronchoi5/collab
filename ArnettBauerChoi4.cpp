@@ -367,7 +367,7 @@ void menuGenerator(){
         cin >> larger;
         if(larger != "0" && larger != "1"){
           cout << "You seem to have not been able to enter 0 or 1 please restart." << endl;
-          return;
+          continue;
         }
         cout << "What do you want the sort to be if the list is smaller than the threshold?" << endl;
         cout << "0) Bubble Sort" << endl;
@@ -375,7 +375,7 @@ void menuGenerator(){
         cin >> smaller;
         if(smaller != "0" && smaller != "1"){
           cout << "You seem to have not been able to enter 0 or 1 please restart." << endl;
-          return;
+          continue;
         }
         hybridSort(copyvector,larger, smaller, threshold);
         if(elements <= 100){
