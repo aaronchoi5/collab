@@ -239,7 +239,7 @@ void hybridSort(vector<T> &v, string larger, string smaller, int threshold){
       return;
     }
   }
-  else if(v.size() < threshold){
+  else{
     cout << "Do not enter a threshold value greater than the size of the array!" << endl;
   }
 
