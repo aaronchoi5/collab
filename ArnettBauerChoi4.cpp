@@ -10,6 +10,36 @@ using namespace std;
 
 int counter=0;
 
+//==============================================================Comparison Counter=============================================================\\
+
+//This function, "Comparison Counter" (CC for short) counts up every time a comparison is made
+bool CC(int i, string mode, int j){
+    //Increment counter
+    counter++;
+
+    //Check case
+    if(mode == "<"){
+        if (i < j) return true; else return false;
+    }
+    else if(mode == "<="){
+        if (i <= j) return true; else return false;
+    }
+    else if(mode == ">"){
+        if (i > j) return true; else return false;
+    }
+    else if(mode == ">="){
+        if (i >= j) return true; else return false;
+    }
+    else if(mode == "=="){
+        if (i == j) return true; else return false;
+    }
+    else{
+        cout << "wrong input, user should not ever see this message, fix code" << endl;
+        counter--;
+        return false;
+    }
+}
+
 //================================================================Insertion Sort===============================================================\\
 
 template <typename T>
@@ -21,12 +51,11 @@ void insertionSort(vector<T> &v){
   for(i = 1; i < v.size(); i++){
     j = i;
     //when i goes up temp stores the value at array[j] and assigns the one before it to array[j] and then the [j-1] becomes the old [j] write it out if you wanna see
-    while(j > 0 && v[j-1] > v[j]){
+    while(CC(j, ">", 0) && CC(v[j-1], ">", v[j])){
       temp = v[j];
       v[j] = v[j-1];
       v[j-1] = temp;
       j--;
-      counter++;
     }
   }
 }
@@ -40,8 +69,7 @@ void bubbleSort(vector<T> &v){
   while (!sorted) {
       sorted = true;
     for (int i = 0; i < v.size() - 1; i++) {
-      counter++;  //number of comparisons
-      if (v[i]> v[i + 1]) {
+      if (CC(v[i], ">", v[i + 1])){
         sorted = false;
         T tmp = v[i];
         v[i] = v[i + 1];
@@ -60,27 +88,26 @@ void merge(vector<T> &a, vector<T> &b, vector<T> &ret){
   unsigned int bi = 0;
   //vector<int> ret;
   while(ai < a.size() || bi < b.size()){ // pull numbers off!
-    if( ai == a.size()){ // a is done
+    if(CC(ai, "==", a.size())){ // a is done
       ret.push_back(b[bi]);
       bi++;
-    }else if(bi == b.size()){ // b is done
+    }else if(CC(bi, "==", b.size())){ // b is done
       ret.push_back(a[ai]);
       ai++;
-    }else if( a[ai] < b[bi]){
+    }else if(CC(a[ai], "<", b[bi])){
       ret.push_back(a[ai]);
       ai++;
     }else{
       ret.push_back(b[bi]);
       bi++;
     }
-    counter++;
   }
 }
 
 template <typename T>
 void mergeSort(vector<T> &v){ // In place!
   // base case!
-  if(v.size() <= 1){
+  if(CC(v.size(), "<=", 1)){
     return;
   }
   // cut list into two halves
@@ -90,7 +117,7 @@ void mergeSort(vector<T> &v){ // In place!
   vector<T> right;
   right.reserve(v.size());
   for(unsigned int i = 0; i < v.size() ;i++){
-    if(i < middle){
+    if(CC(i, "<", middle)){
       left.push_back(v[i]);
     }else{
       right.push_back(v[i]);
@@ -112,13 +139,12 @@ void quickSort(vector<T> &v, int left, int right) {
       T tmp;
       T pivot = v[(left + right) / 2];
       /* partition section */
-      while (i <= j) {
-            counter++;
-            while (v[i] < pivot)
+      while (CC(i, "<=", j)){
+            while (CC(v[i], "<", pivot))
                   i++;
-            while (v[j] > pivot)
+            while (CC(v[j], ">", pivot))
                   j--;
-            if (i <= j) {
+            if (CC(i, "<=", j)){
                   tmp = v[i];
                   v[i] = v[j];
                   v[j] = tmp;
@@ -128,9 +154,9 @@ void quickSort(vector<T> &v, int left, int right) {
       };
 
       /* recursion section*/
-      if (left < j)
+      if (CC(left, "<", j))
             quickSort(v, left, j);
-      if (i < right)
+      if (CC(i, "<", right))
             quickSort(v, i, right);
 }
 
@@ -142,7 +168,7 @@ template <typename T>
 void mergeHybridSort(vector<T> &v, string smaller,int threshold){ // In place!
   // base case!
 
-  if(v.size() <= 1){
+  if(CC(v.size(), "<=", 1)){
     return;
   }
   if(v.size() < threshold){
@@ -162,7 +188,7 @@ void mergeHybridSort(vector<T> &v, string smaller,int threshold){ // In place!
   vector<T> right;
   right.reserve(v.size());
   for(unsigned int i = 0; i < v.size() ;i++){
-    if(i < middle){
+    if(CC(i, "<", middle)){
       left.push_back(v[i]);
     }else{
       right.push_back(v[i]);
@@ -183,36 +209,40 @@ void quickHybridSort(vector<T> &v, int left, int right, string smaller ,int thre
       int i = left, j = right;
       T tmp;
       T pivot = v[(left + right) / 2];
-      counter++;
-      if(v.size() < threshold){
+      if(right-left < threshold){
+          vector<T> CopyVec;
+          for(int i = 0; i < right-left; i++){
+              CopyVec.push_back(v[left + i]);
+          }
           if(smaller == "0"){
-            bubbleSort(v);
+            bubbleSort(CopyVec);
           }
           else if(smaller == "1"){
-            insertionSort(v);
+            insertionSort(CopyVec);
           }
        }
+      else{
+          /* partition section */
+          while (CC(i, "<=", j)) {
+                while (CC(v[i], "<", pivot))
+                      i++;
+                while (CC(v[j], ">", pivot))
+                      j--;
+                if (CC(i, "<=", j)){
+                      tmp = v[i];
+                      v[i] = v[j];
+                      v[j] = tmp;
+                      i++;
+                      j--;
+                }
+          }
 
-      /* partition section */
-      while (i <= j) {
-            while (v[i] < pivot)
-                  i++;
-            while (v[j] > pivot)
-                  j--;
-            if (i <= j) {
-                  tmp = v[i];
-                  v[i] = v[j];
-                  v[j] = tmp;
-                  i++;
-                  j--;
-            }
-      };
-
-      /* recursion section*/
-      if (left < j)
-            quickHybridSort(v, left, j, smaller, threshold);
-      if (i < right)
-            quickHybridSort(v, i, right, smaller, threshold);
+          /* recursion section*/
+          if (CC(left, "<", j))
+                quickHybridSort(v, left, j, smaller, threshold);
+          if (CC(i, "<", right))
+                quickHybridSort(v, i, right, smaller, threshold);
+      }
   }
 
 //-----------------------------------------------------------------Hybrid Sort-----------------------------------------------------------------\\
@@ -222,16 +252,19 @@ void hybridSort(vector<T> &v, string larger, string smaller, int threshold){
 
 
   if(v.size() > threshold){
+    //User picks Merge Sort
     if(larger == "0"){
       mergeHybridSort(v, smaller, threshold);
       return;
     }
+    //User picks Quick Sort
     else if(larger == "1"){
       quickHybridSort(v, 0, v.size()-1, smaller, threshold);
       return;
     }
   }
   else{
+    //User accidentally enters an invalid number for threshold.
     cout << "Do not enter a threshold value greater than the size of the array!" << endl;
   }
 }
