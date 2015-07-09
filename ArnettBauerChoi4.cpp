@@ -10,6 +10,7 @@ using namespace std;
 
 int counter=0;
 
+//================================================================Insertion Sort===============================================================\\
 
 template <typename T>
 //takes in a vector of any type and does insert sort:
@@ -30,12 +31,12 @@ void insertionSort(vector<T> &v){
   }
 }
 
-template <typename T>
+//=================================================================Bubble Sort=================================================================\\
 
+template <typename T>
 void bubbleSort(vector<T> &v){
 
   bool sorted = false;
-  int maxIdx = v.size() - 1;
   while (!sorted) {
       sorted = true;
     for (int i = 0; i < v.size() - 1; i++) {
@@ -45,12 +46,14 @@ void bubbleSort(vector<T> &v){
         T tmp = v[i];
         v[i] = v[i + 1];
         v[i + 1] = tmp;
+      }
     }
   }
-    maxIdx--;
-       }
 
 }
+
+//==================================================================Merge Sort=================================================================\\
+
 template<typename T>
 void merge(vector<T> &a, vector<T> &b, vector<T> &ret){
   unsigned int ai = 0;
@@ -101,6 +104,40 @@ void mergeSort(vector<T> &v){ // In place!
   merge(left, right, v);
 }
 
+//==================================================================Quick Sort=================================================================\\
+
+template <typename T>
+void quickSort(vector<T> &v, int left, int right) {
+      int i = left, j = right;
+      T tmp;
+      T pivot = v[(left + right) / 2];
+      /* partition section */
+      while (i <= j) {
+            counter++;
+            while (v[i] < pivot)
+                  i++;
+            while (v[j] > pivot)
+                  j--;
+            if (i <= j) {
+                  tmp = v[i];
+                  v[i] = v[j];
+                  v[j] = tmp;
+                  i++;
+                  j--;
+            }
+      };
+
+      /* recursion section*/
+      if (left < j)
+            quickSort(v, left, j);
+      if (i < right)
+            quickSort(v, i, right);
+}
+
+//=================================================================Hybrid Sort=================================================================\\
+
+//-------------------------------------------------------------Merge sort (hybrid)-------------------------------------------------------------\\
+
 template <typename T>
 void mergeHybridSort(vector<T> &v, string smaller,int threshold){ // In place!
   // base case!
@@ -139,34 +176,8 @@ void mergeHybridSort(vector<T> &v, string smaller,int threshold){ // In place!
   merge(left, right, v);
 }
 
+//-------------------------------------------------------------Quick Sort (hybrid)-------------------------------------------------------------\\
 
-template <typename T>
-void quickSort(vector<T> &v, int left, int right) {
-      int i = left, j = right;
-      T tmp;
-      T pivot = v[(left + right) / 2];
-      /* partition section */
-      while (i <= j) {
-            counter++;
-            while (v[i] < pivot)
-                  i++;
-            while (v[j] > pivot)
-                  j--;
-            if (i <= j) {
-                  tmp = v[i];
-                  v[i] = v[j];
-                  v[j] = tmp;
-                  i++;
-                  j--;
-            }
-      };
-
-      /* recursion section*/
-      if (left < j)
-            quickSort(v, left, j);
-      if (i < right)
-            quickSort(v, i, right);
-}
 template <typename T>
 void quickHybridSort(vector<T> &v, int left, int right, string smaller ,int threshold) {
       int i = left, j = right;
@@ -203,28 +214,9 @@ void quickHybridSort(vector<T> &v, int left, int right, string smaller ,int thre
       if (i < right)
             quickHybridSort(v, i, right, smaller, threshold);
   }
-template<typename T>
-void displayList(vector<T> &v){
-    cout<<"[";
-    for(unsigned int k=0; k<v.size()-1; k++){
-        cout<<v[k]<<",";
-    }
-    cout<<v[v.size()-1]<<"]"<<endl;
-    return;
-}
-template<typename T>
-vector<T> listGenerator(vector<T> &A, int elements){      //assigns values to the inputted array.
 
-    srand(time(0));
-    int number = 0;
+//-----------------------------------------------------------------Hybrid Sort-----------------------------------------------------------------\\
 
-    for(int k=0; k<elements; k++){
-        number = rand() % 1000;
-        A.push_back(number);
-    }
-
-    return A;
-}
 template <typename T>
 void hybridSort(vector<T> &v, string larger, string smaller, int threshold){
 
@@ -242,10 +234,43 @@ void hybridSort(vector<T> &v, string larger, string smaller, int threshold){
   else{
     cout << "Do not enter a threshold value greater than the size of the array!" << endl;
   }
-
-
-
 }
+
+//=============================================================================================================================================\\
+//<<===========================================================END SORT ALGORITHMS===========================================================>>\\
+//<<=========================================================BEGIN PROGRAM FUNCTIONS=========================================================>>\\
+//===========================================================================================================================================>>\\
+
+//-----------------------------------------------------------------Display List----------------------------------------------------------------\\
+
+template<typename T>
+void displayList(vector<T> &v){
+    cout<<"[";
+    for(unsigned int k=0; k<v.size()-1; k++){
+        cout<<v[k]<<",";
+    }
+    cout<<v[v.size()-1]<<"]"<<endl;
+    return;
+}
+
+//----------------------------------------------------------------List Generator---------------------------------------------------------------\\
+
+template<typename T>
+vector<T> listGenerator(vector<T> &A, int elements){      //assigns values to the inputted array.
+
+    srand(time(0));
+    int number = 0;
+
+    for(int k=0; k<elements; k++){
+        number = rand() % 1000;
+        A.push_back(number);
+    }
+
+    return A;
+}
+
+//----------------------------------------------------------------Menu Function----------------------------------------------------------------\\
+
 template <typename T>
 void menuGenerator(){
     cout<<"Authors: Austin Arnett, Brian Bauer, Aaron Choi."<<endl;
@@ -293,6 +318,9 @@ void menuGenerator(){
             displayList(thelist);
         }
     }
+    else{
+        thelist = listGenerator(templist, elements);
+    }
 
 
     bool running = true;
@@ -308,19 +336,27 @@ void menuGenerator(){
       cin >> choice;
       if(choice == 1){
         bubbleSort(copyvector);
-        displayList(copyvector);
+        if(elements <= 100){
+            displayList(copyvector);
+        }
       }
       else if(choice == 2){
         insertionSort(copyvector);
-        displayList(copyvector);
+        if(elements <= 100){
+            displayList(copyvector);
+        }
       }
       else if(choice == 3){
         quickSort(copyvector,0, thelist.size()-1);
-        displayList(copyvector);
+        if(elements <= 100){
+            displayList(copyvector);
+        }
       }
       else if(choice == 4){
         mergeSort(copyvector);
-        displayList(copyvector);
+        if(elements <= 100){
+            displayList(copyvector);
+        }
       }
       else if(choice == 5){
         string larger = "";
@@ -342,12 +378,14 @@ void menuGenerator(){
           return;
         }
         hybridSort(copyvector,larger, smaller, threshold);
-        cout << "Original list: ";
-        displayList(thelist);
-        cout << endl;
-        cout << "Sorted list: ";
-        displayList(copyvector);
-        cout << endl;
+        if(elements <= 100){
+            cout << "Original list: ";
+            displayList(thelist);
+            cout << endl;
+            cout << "Sorted list: ";
+            displayList(copyvector);
+            cout << endl;
+        }
       }
       cout<<"Number of comparisons: "<<counter<<endl;
       cout << "Do you want to choose a sort again? Enter 1 if you want to and 0 if you do not.";
@@ -360,9 +398,13 @@ void menuGenerator(){
     while(running);
     }
 
+//---------------------------------------------------------------------Main--------------------------------------------------------------------\\
+
 int main(){
 
     menuGenerator<int>();
 
   return 0;
 }
+
+
