@@ -424,8 +424,15 @@ void menuGenerator(){
         }
       }
       cout<<"Number of comparisons: "<<counter<<endl;
-      cout << "Do you want to choose a sort again? Enter 1 if you want to and 0 if you do not.";
-      cin >> running;
+      cout << "Do you want to choose a sort again? Enter 1 if you want to and anything else if you do not.";
+      string runningbool = "boo";
+      cin >> runningbool;
+      if(runningbool == "1"){
+        running = true;
+      }
+      else{
+        running = false;
+      }
       counter=0;  //global variable counting number of comparisons.
 
 
