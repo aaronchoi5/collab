@@ -10,8 +10,6 @@ using namespace std;
 
 int counter=0;
 
-template <typename T>
-void displayList(vector<T> &v);
 //==============================================================Comparison Counter=============================================================\\
 
 //This function, "Comparison Counter" (CC for short) counts up every time a comparison is made
@@ -66,7 +64,6 @@ void insertionSort(vector<T> &v){
 
 template <typename T>
 void bubbleSort(vector<T> &v){
-    displayList(v);
     bool sorted = false;
     while (!sorted) {
         sorted = true;
@@ -79,8 +76,6 @@ void bubbleSort(vector<T> &v){
             }
         }
     }
-    displayList(v);
-
 }
 
 //==================================================================Merge Sort=================================================================\\
