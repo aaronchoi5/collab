@@ -10,6 +10,8 @@ using namespace std;
 
 int counter=0;
 
+template <typename T>
+void displayList(vector<T> &v);
 //==============================================================Comparison Counter=============================================================\\
 
 //This function, "Comparison Counter" (CC for short) counts up every time a comparison is made
@@ -64,19 +66,20 @@ void insertionSort(vector<T> &v){
 
 template <typename T>
 void bubbleSort(vector<T> &v){
-
-  bool sorted = false;
-  while (!sorted) {
-      sorted = true;
-    for (int i = 0; i < v.size() - 1; i++) {
-      if (CC(v[i], ">", v[i + 1])){
-        sorted = false;
-        T tmp = v[i];
-        v[i] = v[i + 1];
-        v[i + 1] = tmp;
-      }
+    displayList(v);
+    bool sorted = false;
+    while (!sorted) {
+        sorted = true;
+        for (int i = 0; i < v.size() - 1; i++) {
+            if (CC(v[i], ">", v[i + 1])){
+                sorted = false;
+                T tmp = v[i];
+                v[i] = v[i + 1];
+                v[i + 1] = tmp;
+            }
+        }
     }
-  }
+    displayList(v);
 
 }
 
@@ -206,35 +209,40 @@ void mergeHybridSort(vector<T> &v, string smaller,int threshold){ // In place!
 
 template <typename T>
 void quickHybridSort(vector<T> &v, int left, int right, string smaller ,int threshold) {
-      int i = left, j = right;
-      T tmp;
-      T pivot = v[(left + right) / 2];
-      if(right-left < threshold){
-          vector<T> CopyVec;
-          for(int i = 0; i < right-left; i++){
-              CopyVec.push_back(v[left + i]);
-          }
-          if(smaller == "0"){
+    if(right-left < threshold){//if less than threshold, do basic sort...
+        vector<T> CopyVec;
+        for(int i = left; i <= right; i++){
+            CopyVec.push_back(v[i]);
+        }
+        //"smaller" is the user's choice of basic sort
+        if(smaller == "0"){
             bubbleSort(CopyVec);
-          }
-          else if(smaller == "1"){
+        }
+        else if(smaller == "1"){
             insertionSort(CopyVec);
-          }
-       }
-      else{
-          /* partition section */
-          while (CC(i, "<=", j)) {
-                while (CC(v[i], "<", pivot))
-                      i++;
-                while (CC(v[j], ">", pivot))
-                      j--;
-                if (CC(i, "<=", j)){
-                      tmp = v[i];
-                      v[i] = v[j];
-                      v[j] = tmp;
-                      i++;
-                      j--;
-                }
+        }
+        //copy the sorted elements back into the original vector in the correct order
+        for(int i = 0; i <= right-left; i++){
+            v[i+left] = CopyVec[i];
+        }
+    }
+    else{//...otherwise continue quicksort
+        int i = left, j = right;
+        T tmp;
+        T pivot = v[(left + right) / 2];
+        /* partition section */
+        while (CC(i, "<=", j)) {
+            while (CC(v[i], "<", pivot))
+                i++;
+            while (CC(v[j], ">", pivot))
+                j--;
+            if (CC(i, "<=", j)){
+                tmp = v[i];
+                v[i] = v[j];
+                v[j] = tmp;
+                i++;
+                j--;
+            }
           }
 
           /* recursion section*/
