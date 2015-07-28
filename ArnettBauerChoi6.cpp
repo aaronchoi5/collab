@@ -32,15 +32,35 @@ HashTable::HashTable(){
 
 void HashTable::menu(){
     string UserInput;
-    stringstream ss;
-    cout << "Please enter a load ratio to begin (Please enter a 2 digit decimal)\nType \"help\" if your are ever confused.\n";
+
+    cout << "To begin, enter a Hash Table size: ";
+    while(1){
+        cin >> UserInput;
+        stringstream(UserInput)>>TableSize;
+        if(TableSize <= 0)
+            cout << "Do not falter young padawon, you must enter a number greater than 0.\n";
+        else
+            break;
+    }
+    cout << "Now ";
+    while(1){
+        cout << "enter the number of keys (make sure the number is prime): ";
+        cin >> UserInput;
+        stringstream(UserInput)>>Num_of_keys;
+        if(Num_of_keys <= 0){
+            cout << "Avast ye scurvy dawg, enter a number greater 'tan zero!\n";
+        }
+        else
+            break;
+    }
+
+    cout << "Please enter a load ratio (A 2 digit decimal)\nType \"help\" if your are confused.\n";
     while(1){
         cin >> UserInput;
         if(UserInput == "help")
             cout << "An example of inputting a load ratio of 25% would be entering \"0.25\"\n";
         else{
             stringstream(UserInput)>>LoadRatio;
-            ss.clear();
             if(LoadRatio <= 0 || LoadRatio > 1){
                 cout << "Please enter a valid range, input, or command\n";
             }
@@ -50,10 +70,11 @@ void HashTable::menu(){
             cout << "Try again (remember \"help\"): ";
         }
     }
+    cout << "Now ";
     while(1){
-        cout << "Now please select an option in order to create a table:" << endl
-             << "(1) Insert the numbers into the hash table manually." << endl
-             << "(2) Randomly generate and insert the numbers." << endl;
+        cout << "please select an option in order to create a table:\n"
+             << "(1) Insert the numbers into the hash table manually.\n"
+             << "(2) Randomly generate and insert the numbers.\n";
         cin >> UserInput;
         if(UserInput == "1"){
             FillTable("Manual");
@@ -71,7 +92,7 @@ void HashTable::menu(){
 /*====================================================================Fill Table===================================================================*/
 void HashTable::FillTable(string choice){
     if(choice == "Manual"){
-        for
+
     }
 }
 
