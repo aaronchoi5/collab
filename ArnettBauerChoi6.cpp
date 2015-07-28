@@ -8,13 +8,18 @@ using namespace std;
 
 class HashTable{
 private:
-    int key;
-    int HashFunc(int key); //k is key
-    int BucketArray[23] = { };
+    // Data
+    int TableSize;
+    int Num_of_keys;
     double LoadRatio = 0.0;
-    void FillTable();
+    int BucketArray[23] = { };
+
+    // Methods
+    int HashFunc(int);
+    void FillTable(string choice);
     void PrintTable();
 public:
+    // Constructor/Menu
     HashTable();
     void menu();
 };
@@ -50,9 +55,25 @@ void HashTable::menu(){
              << "(1) Insert the numbers into the hash table manually." << endl
              << "(2) Randomly generate and insert the numbers." << endl;
         cin >> UserInput;
+        if(UserInput == "1"){
+            FillTable("Manual");
+            break;
+        }
+        else if (UserInput == "2"){
+            FillTable("RNG");// "RNG" stands for "Random Number Generator"
+            break;
+        }
+        else
+            cout << "Please enter 1 or 2 to make a choice. (\"help\" is not available here)\n";
     }
 }
 
+/*====================================================================Fill Table===================================================================*/
+void HashTable::FillTable(string choice){
+    if(choice == "Manual"){
+        for
+    }
+}
 
 int main(){
 
