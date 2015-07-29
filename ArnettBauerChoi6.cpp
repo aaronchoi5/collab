@@ -96,6 +96,28 @@ void HashTable::FillTable(string choice){
     }
 }
 
+/*==================================================================Print Table====================================================================*/
+void HashTable::PrintTable(){
+    if(TableSize<50){
+        cout<<"[";
+        for(int k=0; k<TableSize-1; k++){
+            if(BucketArray[k]==.5){
+                cout<<" ,";
+            }
+            else{
+                cout<<BucketArray[k]<<",";
+            }
+        }
+        if(BucketArray[TableSize-1]==.5){
+            cout<<" ]"<<endl;
+        }
+        else{
+            cout<<BucketArray[TableSize-1]<<"]"<<endl;
+        }
+    }
+    return;
+}
+
 int main(){
 
     HashTable HashBrowns;
