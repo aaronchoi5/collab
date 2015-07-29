@@ -12,12 +12,14 @@ private:
     int TableSize;
     int Num_of_keys;
     double LoadRatio;
-    int BucketArray[];
+    double BucketArray[];
 
     // Methods
     int HashFunc(int);
     void FillTable(string choice);
     void PrintTable();
+    void TableInsert(int index, int number);
+    void LinearInsert(int index, int number);
 public:
     // Constructor/Menu
     HashTable();
@@ -30,7 +32,7 @@ HashTable::HashTable(){
 
 /*==================================================================Hash Function==================================================================*/
 int HashTable::HashFunc(int key){
-  return key / TableSize;
+  return key % TableSize;
 }
 
 /*==================================================================Menu Function==================================================================*/
@@ -45,6 +47,7 @@ void HashTable::menu(){
         if(TableSize <= 0)
             cout << "Do not falter young padawon, you must enter a number greater than 0.\n";
         else
+        BucketArray[TableSize];
             break;
     }
     cout << "Now ";
@@ -94,12 +97,55 @@ void HashTable::menu(){
     }
 }
 
+/*==================================================================Linear Insert==================================================================*/
+void HashTable::LinearInsert(int index, int tempkey){
+    int i=1;
+    while(BucketArray[index+i]!=.5){
+        i++;
+    }
+    BucketArray[index+i]=tempkey;
+    return;
+}
+/*===================================================================Table Insert==================================================================*/
+void HashTable::TableInsert(int index, int tempkey){
+    if(BucketArray[index]==.5){
+        BucketArray[index]=tempkey;
+    }
+    else{
+        LinearInsert(index, tempkey);  //collision resolution method
+    }
+    return;
+}
 /*====================================================================Fill Table===================================================================*/
 void HashTable::FillTable(string choice){
-    BucketArray[TableSize];
-    if(choice == "Manual"){
-
+    cout<<"initialized..."<<TableSize<<endl;
+    for(int k=0; k<TableSize; k++){
+            cout<<"boom";
+        BucketArray[k]=.5;
     }
+    cout<<"third element: "<<BucketArray[2]<<endl;
+    int counter=0;
+    int index;
+    int tempkey;
+    if(choice == "Manual"){
+        while((counter/TableSize)<=LoadRatio){
+            cout<<"input key: ";
+            cin>>tempkey;
+            index=HashFunc(tempkey);
+            TableInsert(index, tempkey);
+            counter++;
+        }
+    }
+    else if(choice == "RNG"){
+        srand(time(NULL));
+        while((counter/TableSize)<=LoadRatio){
+            tempkey=rand();
+            index=HashFunc(tempkey);
+            TableInsert(index, tempkey);
+            counter++;
+        }
+    }
+    return;
 }
 
 /*==================================================================Print Table====================================================================*/
@@ -127,7 +173,7 @@ void HashTable::PrintTable(){
 int main(){
 
     HashTable HashBrowns;
-    
+
     HashBrowns.menu();
 
     return 0;
