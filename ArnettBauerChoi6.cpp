@@ -11,8 +11,8 @@ private:
     // Data
     int TableSize;
     int Num_of_keys;
-    double LoadRatio = 0.0;
-    int BucketArray[23] = { };
+    double LoadRatio;
+    int BucketArray[];
 
     // Methods
     int HashFunc(int);
@@ -26,6 +26,11 @@ public:
 
 HashTable::HashTable(){
 
+}
+
+/*==================================================================Hash Function==================================================================*/
+int HashTable::HashFunc(int key){
+  return key / TableSize;
 }
 
 /*==================================================================Menu Function==================================================================*/
@@ -91,6 +96,7 @@ void HashTable::menu(){
 
 /*====================================================================Fill Table===================================================================*/
 void HashTable::FillTable(string choice){
+    BucketArray[TableSize];
     if(choice == "Manual"){
 
     }
@@ -121,6 +127,7 @@ void HashTable::PrintTable(){
 int main(){
 
     HashTable HashBrowns;
+    
     HashBrowns.menu();
 
     return 0;
