@@ -12,27 +12,36 @@ private:
     int TableSize;
     int Num_of_keys;
     double LoadRatio;
-    double BucketArray[];
+    string BucketArray[2000];
+    string collRes;
 
     // Methods
-    int HashFunc(int);
+    int HashFunc(string lekey);
     void FillTable(string choice);
     void PrintTable();
-    void TableInsert(int index, int number);
-    void LinearInsert(int index, int number);
+    void TableInsert(int index, string tempkey, string collRes);
+    void LinearInsert(int index, string tempkey);
+    void QuadraInsert(int index, string tempkey);
+    void ChainInsert(int index, string tempkey);
+    void DoubleHashing(int index, string tempkey);
 public:
+    struct Node{
+        float value;
+        Node* next;
+    };
     // Constructor/Menu
     HashTable();
     void menu();
 };
 
 HashTable::HashTable(){
-
 }
 
 /*==================================================================Hash Function==================================================================*/
-int HashTable::HashFunc(int key){
-  return key % TableSize;
+int HashTable::HashFunc(string key){
+    int intkey=0;
+    stringstream(key)>>intkey;
+  return intkey % TableSize;
 }
 
 /*==================================================================Menu Function==================================================================*/
@@ -47,7 +56,6 @@ void HashTable::menu(){
         if(TableSize <= 0)
             cout << "Do not falter young padawon, you must enter a number greater than 0.\n";
         else
-        BucketArray[TableSize];
             break;
     }
     cout << "Now ";
@@ -78,6 +86,15 @@ void HashTable::menu(){
             cout << "Try again (remember \"help\"): ";
         }
     }
+
+    cout<<"Choose a collision resolution scheme:"<<endl<<"1) linear probing"<<endl<<"2) quadratic probing"<<endl;
+    cout<<"3) double hashing"<<endl<<"4) chaining"<<endl<<"5) exit"<<endl;
+    cin>>collRes;
+    while(collRes!="1"
+          && collRes!="2"&&collRes!="3"&&collRes!="4"&& collRes!="5"){
+        cout<<"Please enter a number 1 through 5: ";
+        cin>>collRes;
+    }
     cout << "Now ";
     while(1){
         cout << "please select an option in order to create a table:\n"
@@ -98,53 +115,100 @@ void HashTable::menu(){
 }
 
 /*==================================================================Linear Insert==================================================================*/
-void HashTable::LinearInsert(int index, int tempkey){
+void HashTable::LinearInsert(int index, string tempkey){
     int i=1;
-    while(BucketArray[index+i]!=.5){
+    while(BucketArray[index+i]!=".5"){
         i++;
     }
     BucketArray[index+i]=tempkey;
     return;
 }
-/*===================================================================Table Insert==================================================================*/
-void HashTable::TableInsert(int index, int tempkey){
-    if(BucketArray[index]==.5){
-        BucketArray[index]=tempkey;
+/*==================================================================Quadra Insert==================================================================*/
+void HashTable::QuadraInsert(int index, string tempkey){
+    int i=1;
+    while(BucketArray[(index+i*i)%TableSize]!=".5"){
+        i++;
     }
-    else{
-        LinearInsert(index, tempkey);  //collision resolution method
+    BucketArray[(index+i*i)%TableSize]=tempkey;
+    return;
+}
+/*===================================================================Chain Insert==================================================================*/
+void HashTable::ChainInsert(int index, string tempkey){
+
+    if(BucketArray[index]!=".5"){
+        BucketArray[index]=BucketArray[index]+" "+tempkey;
     }
     return;
 }
+
+/*==================================================================Double Hashing=================================================================*/
+void HashTable::DoubleHashing(int index, string tempkey){
+    int intkey;
+    stringstream(tempkey)>>intkey;
+    int i=1;
+    while(BucketArray[(index+i*(20-intkey%20))%TableSize]!=".5"){
+        i++;
+        cout << i << endl;
+    }
+    BucketArray[(index+i*(20-intkey%20))%TableSize]=tempkey;
+    return;
+}
+/*===================================================================Table Insert==================================================================*/
+void HashTable::TableInsert(int index, string tempkey, string collRes){
+    if(BucketArray[index]==".5"){
+        BucketArray[index]=tempkey;
+    }
+    else if(collRes=="1"){
+        LinearInsert(index, tempkey);  //collision resolution method
+    }
+    else if(collRes=="2"){
+        QuadraInsert(index, tempkey);
+    }
+    else if(collRes=="3"){
+        DoubleHashing(index, tempkey);
+    }
+    else if(collRes=="4"){
+        ChainInsert(index, tempkey);
+    }
+    return;
+}
+
+//void HashTable::ArrayInit(){
+//return;
+//    }
 /*====================================================================Fill Table===================================================================*/
 void HashTable::FillTable(string choice){
-    cout<<"initialized..."<<TableSize<<endl;
-    for(int k=0; k<TableSize; k++){
-            cout<<"boom";
-        BucketArray[k]=.5;
+    for(int i = 0; i < TableSize; i++){
+        BucketArray[i] = ".5";
     }
+    cout<<"initialized..."<<TableSize<<endl;
     cout<<"third element: "<<BucketArray[2]<<endl;
     int counter=0;
     int index;
-    int tempkey;
+    string tempkey;
     if(choice == "Manual"){
-        while((counter/TableSize)<=LoadRatio){
+        while((counter/TableSize)<=LoadRatio && counter<Num_of_keys){
             cout<<"input key: ";
             cin>>tempkey;
             index=HashFunc(tempkey);
-            TableInsert(index, tempkey);
+            TableInsert(index, tempkey, collRes);
             counter++;
         }
     }
     else if(choice == "RNG"){
         srand(time(NULL));
-        while((counter/TableSize)<=LoadRatio){
-            tempkey=rand();
+        while((counter/TableSize)<=LoadRatio && counter<Num_of_keys){
+            int RandNum;
+            stringstream ss;
+            RandNum=rand()%100000;
+            ss << RandNum;
+            tempkey = ss.str();
             index=HashFunc(tempkey);
-            TableInsert(index, tempkey);
+            TableInsert(index, tempkey, collRes);
             counter++;
         }
     }
+    PrintTable();
     return;
 }
 
@@ -153,14 +217,14 @@ void HashTable::PrintTable(){
     if(TableSize<50){
         cout<<"[";
         for(int k=0; k<TableSize-1; k++){
-            if(BucketArray[k]==.5){
-                cout<<" ,";
+            if(BucketArray[k]==".5"){
+                cout<<"NULL,";
             }
             else{
                 cout<<BucketArray[k]<<",";
             }
         }
-        if(BucketArray[TableSize-1]==.5){
+        if(BucketArray[TableSize-1]==".5"){
             cout<<" ]"<<endl;
         }
         else{
