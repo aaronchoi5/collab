@@ -70,7 +70,7 @@ HashTable::HashTable(){
     TableSize = 0;
     Num_of_keys = 0;
     LoadRatio = 0;
-    TotalInsertions = 1;
+    TotalInsertions = 0;
     TotalComparisons = 0;
     collRes = "";
     for(int i = 0; i < 2000; i++){
