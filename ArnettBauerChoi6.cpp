@@ -76,8 +76,8 @@ HashTable::HashTable(){
     for(int i = 0; i < 2000; i++){
         BucketArray[i] = "NULL";
     }
-    head = nullptr;
-    Key = nullptr;
+    head = NULL;
+    Key = NULL;
 }
 
 /*==================================================================Menu Function==================================================================*/
@@ -182,7 +182,7 @@ void HashTable::InitKeyArray(int Num_of_keys){
     //first node
     head = new KeyNode;
     head->value = "NULL";
-    head->next = nullptr;
+    head->next = NULL;
 
     KeyNode *PrevNode = head;
 
@@ -191,7 +191,7 @@ void HashTable::InitKeyArray(int Num_of_keys){
         //creation
         KeyNode *NewNode = new KeyNode; //create new node
         NewNode->value = "NULL";             //set data
-        NewNode->next = nullptr;        //set next to null
+        NewNode->next = NULL;        //set next to null
 
         //pointers
         PrevNode->next = NewNode;       //Set PrevNode's pointer
@@ -310,6 +310,8 @@ void HashTable::ResetTable(){
 /*==================================================================Print Table====================================================================*/
 void HashTable::PrintTable(){
     TotalComparisons = counter;
+    counter = 0;
+    
     if(TableSize<=50){
         cout<<"[";
         for(int k=0; k<TableSize-1; k++){
@@ -320,6 +322,7 @@ void HashTable::PrintTable(){
         cout<< BucketArray[TableSize-1] << "]\n";
     }
     cout << "The average number of comparisons: " << fixed << setprecision(3) << (double)TotalComparisons/(double)TotalInsertions << endl;
+    TotalInsertions = 0;
     return;
 }
 
