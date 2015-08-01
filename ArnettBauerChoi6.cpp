@@ -1,3 +1,17 @@
+/*=============================================================================================================================================
+Authors: Austin Arnett, Aaron Choi, Brian Bauer
+Course: Data Structures
+Instructor: Anca Ralescu
+TA: Suryadip Chakraborty
+Abstract:  This program is meant to compare the efficiency of four different collision resolution algorithms (Linear, quadratic, doublehash probing,
+    and chaining.  User enters the Hash Table size, the number of keys, and the load ratio.  The user then has the choice to manually
+    enter the numbers into the hash table or to have the numbers randomly generated.  Finally, the user is asked which resolution scheme
+    is to be used.
+Preconditions:  The user should follow the prompts.  All inputs are numeric (excepting "help").
+Postconditions:  The average number of comparisons used by the chosen resolution scheme.
+
+=============================================================================================================================================*/
+
 #include <stdlib.h>
 #include <string>
 #include <sstream>
@@ -9,7 +23,7 @@ using namespace std;
 
 int counter=0;
 
-//==============================================================Comparison Counter=============================================================\\
+/*==============================================================Comparison Counter=============================================================*/
 
 //This function, "Comparison Counter" (CC for short) counts up every time a comparison is made
 bool CC(string i, string mode, string j){
@@ -311,7 +325,7 @@ void HashTable::ResetTable(){
 void HashTable::PrintTable(){
     TotalComparisons = counter;
     counter = 0;
-    
+
     if(TableSize<=50){
         cout<<"[";
         for(int k=0; k<TableSize-1; k++){
