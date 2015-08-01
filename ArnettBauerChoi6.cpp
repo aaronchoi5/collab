@@ -243,9 +243,7 @@ void HashTable::QuadraInsert(int index, string KeyVal){
 /*===================================================================Chain Insert==================================================================*/
 void HashTable::ChainInsert(int index, string KeyVal){
 
-    if(CC(BucketArray[index],"!=","NULL")){
-        BucketArray[index]=BucketArray[index]+" & "+KeyVal;
-    }
+    BucketArray[index]=BucketArray[index]+" & "+KeyVal;
     return;
 }
 
